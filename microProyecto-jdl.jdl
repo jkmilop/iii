@@ -1,0 +1,93 @@
+application {
+  config {
+    baseName front,
+    applicationType gateway,
+    packageName co.edu.usbcali,
+    authenticationType jwt,
+    prodDatabaseType postgresql,
+    clientFramework angular
+  }
+  entities *
+}
+
+application {
+  config {
+    baseName back,
+    applicationType microservice,
+    packageName co.edu.usbcali,
+    authenticationType jwt,
+    prodDatabaseType postgresql  
+  }
+  entities *
+}
+/* Registry?¿
+application {
+  config {
+    baseName registry,
+    applicationType monolith,
+    packageName co.edu.usbcali,
+    authenticationType jwt,
+    prodDatabaseType postgresql,
+    clientFramework angular
+  }
+  entities *
+}
+*/
+entity Curso {
+    cursoName String,
+    tipoCurso TipoCurso
+}
+/*Relaciones Curso
+*/
+relationship ManyToMany {
+    Curso{profesor} to Profesor{curso}
+}
+relationship ManyToMany {
+	Curso{estudiante} to Estudiante{curso}
+}
+enum TipoCurso {
+    CALCULO, AVANZADA, MAGANA
+}
+
+entity Estudiante {
+    estudianteName String,
+    codigoEstudiante String,
+    correo String
+}
+
+entity Profesor {
+    profesorName String
+    codigoProfesor String
+    correo String
+}
+
+entity Actividad {
+    actividadName String
+    description String
+    fechaInicio Instant
+    fechaFin Instant
+    formato NombreFormato
+    nota Double
+}
+/*Relacion Actividad
+*/
+relationship OneToMany {
+    Curso to Actividad{curso}
+}
+enum NombreFormato {
+    QUIZ, ACTIVIDAD, PARCIAL
+}
+
+entity Desarrollo {
+    estudianteName String
+    actividadName String
+    terminado Boolean
+}
+/*Relacion Desarrollo
+*/
+relationship OneToMany {
+    Desarrollo to Estudiante{desarrollo}
+}
+relationship OneToOne {
+    Desarrollo{actividad} to Actividad{desarrollo}
+}
