@@ -1,12 +1,9 @@
 package co.edu.usbcali.demo.controllers;
 
 import co.edu.usbcali.demo.models.Cliente;
-import co.edu.usbcali.demo.services.ClienteService;
+import co.edu.usbcali.demo.services.ClienteServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
@@ -14,18 +11,32 @@ import java.util.*;
 @RequestMapping(path="/cliente")
 public class ClienteController {
     @Autowired
-    private final ClienteService clienteService;
-    public ClienteController(ClienteService clienteService) {
+    private  ClienteServiceInterface clienteService;
+
+    public ClienteController(ClienteServiceInterface clienteService) {
         this.clienteService = clienteService;
     }
 
-    @GetMapping(path = "/")
+    @GetMapping(path = "/findAll")
     public List<Cliente> getClientes(){
         return clienteService.getClientes();
     }
 
-    @GetMapping(path = "/id")
-    public Optional<Cliente> getCliente(@PathVariable("id")Long id){
+    @GetMapping(path = "/findById/{id}")
+    public Cliente getCliente(@PathVariable("id")Long id){
         return clienteService.getCliente(id);
     }
+    @PostMapping(path = "/save/")
+    public Cliente saveCliente(@RequestBody Cliente cliente){
+        return clienteService.saveCliente(cliente);
+    }
+    @PostMapping(path = "/update/")
+    public Cliente updateCliente(@RequestBody Cliente cliente){
+        return clienteService.updateCliente(cliente);
+    }
+    @DeleteMapping(path = "/delete/")
+    public List<Cliente> deleteCliente(@PathVariable("id")Long id){
+        return clienteService.deleteCliente(id);
+    }
+
 }
