@@ -17,24 +17,24 @@ public class ClienteController {
         this.clienteService = clienteService;
     }
 
-    @GetMapping(path = "/findAll")
+    @GetMapping(path = "/find-clientes")
     public List<Cliente> getClientes(){
         return clienteService.getClientes();
     }
 
-    @GetMapping(path = "/findById/{id}")
+    @GetMapping(path = "/find-cliente/{id}")
     public Cliente getCliente(@PathVariable("id")Long id){
         return clienteService.getCliente(id);
     }
-    @PostMapping(path = "/save/")
+    @PostMapping(path = "/save-cliente")
     public Cliente saveCliente(@RequestBody Cliente cliente){
         return clienteService.saveCliente(cliente);
     }
-    @PostMapping(path = "/update/")
-    public Cliente updateCliente(@RequestBody Cliente cliente){
-        return clienteService.updateCliente(cliente);
+    @PostMapping(path = "/update-cliente/{id}")
+    public Cliente updateCliente(@RequestBody Cliente cliente,@PathVariable("id")Long id){
+        return clienteService.updateCliente(cliente,id);
     }
-    @DeleteMapping(path = "/delete/")
+    @DeleteMapping(path = "/delete-cliente/{id}")
     public List<Cliente> deleteCliente(@PathVariable("id")Long id){
         return clienteService.deleteCliente(id);
     }

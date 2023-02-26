@@ -7,7 +7,7 @@ import java.util.List;
 public interface ClienteServiceInterface {
     public List<Cliente> getClientes();
     public Cliente getCliente(Long id);
-    public Cliente updateCliente(Cliente newCliente) ;
+    public Cliente updateCliente(Cliente newCliente,Long id) ;
     public Cliente saveCliente(Cliente cliente);
     public List<Cliente> deleteCliente(Long id);
 }

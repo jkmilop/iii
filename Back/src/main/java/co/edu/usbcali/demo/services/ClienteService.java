@@ -4,32 +4,37 @@ import co.edu.usbcali.demo.models.Cliente;
 import co.edu.usbcali.demo.repositories.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
+
 @Service
 public class ClienteService implements ClienteServiceInterface{
+    @Autowired
     private ClienteRepository clienteRepository;
+
     @Override
     public List<Cliente> getClientes() {
-        return clienteRepository.findAll();
+        return (List<Cliente>) clienteRepository.findAll();
     }
 
     @Override
     public Cliente getCliente(Long id) {
         if (id==null){
-            throw new IllegalArgumentException("El cliente es obligatorio");
+            throw new IllegalArgumentException("El cliente es obligatorio.");
         }
         Optional<Cliente> clienteOptional=clienteRepository.findById(id);
         if (clienteOptional.isEmpty()){
-            throw new IllegalArgumentException("El cliente no existe");
+            throw new IllegalArgumentException("El cliente no existe.");
         }
         return clienteOptional.get();
         }
 
     @Override
-    public Cliente updateCliente(Cliente newCliente) {
+    public Cliente updateCliente(Cliente newCliente,Long id) {
         if (newCliente==null){
             throw new IllegalArgumentException("El cliente es obligatorio.");
+        }
+        if (newCliente.getNombre()==null){
+            throw new IllegalArgumentException("El nombre es obligatorio.");
         }
         if (newCliente.getId()==null){
             throw new IllegalArgumentException("El id del cliente es obligatorio.");
@@ -40,12 +45,13 @@ public class ClienteService implements ClienteServiceInterface{
         if (newCliente.getCorreo()==null){
             throw new IllegalArgumentException("El correo es obligatorio.");
         }
-        if (newCliente.getNumero()==null){
+        if (newCliente.getCelular()==null){
             throw new IllegalArgumentException("El número es obligatorio.");
         }
-        Cliente instanciaCliente = new Cliente();
+        
+        Cliente instanciaCliente = clienteRepository.findById(id).get();
         instanciaCliente.setId(newCliente.getId());
-        instanciaCliente.setNumero(newCliente.getNumero());
+        instanciaCliente.setCelular(newCliente.getCelular());
         instanciaCliente.setFechaModificacion(new Date());
         instanciaCliente.setFechaCreacion(new Date());
         instanciaCliente.setCorreo(newCliente.getCorreo());
@@ -58,6 +64,9 @@ public class ClienteService implements ClienteServiceInterface{
         if (cliente==null){
             throw new IllegalArgumentException("El cliente es obligatorio");
         }
+        if (cliente.getNombre()==null){
+            throw new IllegalArgumentException("El nombre es obligatorio.");
+        }
         if (cliente.getId()==null){
             throw new IllegalArgumentException("El id del cliente es obligatorio");
         }
@@ -67,7 +76,7 @@ public class ClienteService implements ClienteServiceInterface{
         if (cliente.getCorreo()==null){
             throw new IllegalArgumentException("El correo es obligatorio");
         }
-        if (cliente.getNumero()==null){
+        if (cliente.getCelular()==null){
             throw new IllegalArgumentException("El número es obligatorio");
         }
         return clienteRepository.save(cliente);
@@ -79,6 +88,6 @@ public class ClienteService implements ClienteServiceInterface{
             throw new IllegalArgumentException("El id del cliente es obligatorio");
         }
         clienteRepository.deleteById(id);
-        return clienteRepository.findAll();
+        return (List<Cliente>) clienteRepository.findAll();
     }
 }

@@ -12,7 +12,8 @@ public class Cliente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Integer cedula;
-    private Integer numero;
+    private String nombre;
+    private Integer celular;
     private String correo;
     private String estado;
     @Column(name ="fecha_creacion")
