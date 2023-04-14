@@ -115,21 +115,46 @@ const consultDB =  (req, res) => {
         pool.end;
     });
 }
-
+ 
 const addCliente = (req, res) => {
-    const {nombre_cliente, cedula, numero_personal, correo_personal} = req.body;
+    const {nombre_cliente, password, cedula, numero_personal, correo_personal} = req.body;
     pool.connect();
     //check if email exist
-    pool.query(queries.checkEmailExists, [correo_personal], (error, result) => {
+    pool.query(queries.checkClienteEmailExists, [correo_personal], (error, result) => { 
+        console.log("Result: " + result);
+        console.log("Error:" + error);
         if(result.rows.length){
             res.send('Email already exist')
+            return;
         }
 
         //add client
-        pool.query(queries.addCliente, [nombre_cliente, cedula, numero_personal, correo_personal], (errors, results) => {
+        pool.query(queries.addCliente, [nombre_cliente, password, cedula, numero_personal, correo_personal], (errors, results) => {
             if(errors) throw errors;
             res.status(201).send("Client created successfully");
             console.log('Client created');
+        })
+        pool.end;
+    })
+}
+ 
+const crearEmprendedor = (req, res) => {
+    const {nombre_emprendedor, password, cedula, numero_personal, correo_personal} = req.body;
+    pool.connect();
+    //check if email exist
+    pool.query(queries.checkEmprendedorEmailExists, [correo_personal], (error, result) => { 
+        console.log("Result: " + result);
+        console.log("Error:" + error);
+        if(result.rows.length){
+            res.send('Email already exist')
+            return
+        }
+
+        //add client
+        pool.query(queries.addEmprendedor, [nombre_emprendedor, password, cedula, numero_personal, correo_personal], (errors, results) => {
+            if(errors) throw errors;
+            res.status(201).send("Emprendedor created successfully");
+            console.log('Emprendedor created');
         })
 
         pool.end;
@@ -140,4 +165,5 @@ module.exports = {
     getClients,
     addCliente,
     consultDB,
+    crearEmprendedor,
 }
