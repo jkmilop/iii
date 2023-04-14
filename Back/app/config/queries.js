@@ -1,6 +1,6 @@
-const getClients = 'select * from bd_cliente';
-const checkEmailExists = 'SELECT client FROM bd_cliente client WHERE client.correo_personal = $1';
-const addCliente = 'INSERT INTO bd_cliente (nombre_cliente, cedula, numero_personal, correo_personal) VALUES ($1, $2, $3, $4)';
+const getClients = 'select * from cliente';
+const checkEmailExists = 'SELECT client FROM cliente client WHERE client.correo_personal = $1';
+const addCliente = 'INSERT INTO cliente (nombre_cliente, cedula, numero_personal, correo_personal) VALUES ($1, $2, $3, $4)';
 const consultDB = "select column_name, data_type, is_nullable from information_schema.columns where table_name = 'cliente'";
 const createClient = "CREATE TABLE Cliente (cliente_id SERIAL,nombre_cliente varchar(255) NOT NULL,cedula int NOT NULL,numero_personal int,correo_personal varchar(255),PRIMARY KEY (cliente_id))";
 const createEmprendedor = "CREATE TABLE Emprendedor (emprendedor_id SERIAL,nombre_emprendedor varchar(255) NOT NULL,cedula int NOT NULL,numero_personal int NOT NULL,correo_personal int NOT NULL,PRIMARY KEY (emprendedor_id))";
