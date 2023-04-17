@@ -12,7 +12,7 @@ function App() {
       <Menu /><br />
       <Container>
         <Routes>
-          <Route index path="/" element={<RegistroCliente />} />
+          <Route index path="/" element={<TasksList />} />
           <Route path="/tasks/new" element={<TaskForm />} />
           <Route path="/tasks/:id/edit" element={<TaskForm />} />
         </Routes>

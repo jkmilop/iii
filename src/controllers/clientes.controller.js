@@ -2,11 +2,11 @@ const pool = require("../db");
 
 const createCliente = async (req, res, next) => {
   try {
-    const { title, description } = req.body;
+    const { nombre, cedula, telefono, correo } = req.body;
 
     const newCliente = await pool.query(
-      "INSERT INTO cliente (title, description) VALUES($1, $2) RETURNING *",
-      [title, description]
+      "INSERT INTO cliente ( nombre, cedula, telefono, correo) VALUES($1, $2,$3, $4) RETURNING *",
+      [nombre, cedula, telefono, correo]
     );
 
     res.json(newCliente.rows[0]);
@@ -41,11 +41,11 @@ const getCliente = async (req, res) => {
 const updateCliente = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description } = req.body;
+    const { nombre, cedula, telefono, correo } = req.body;
 
     const result = await pool.query(
-      "UPDATE cliente SET title = $1, description = $2 WHERE id = $3 RETURNING *",
-      [title, description, id]
+      "UPDATE cliente SET nombre = $1, cedula = $2, telefono = $3, correo = $4 WHERE id = $5 RETURNING *",
+      [nombre, cedula, telefono, correo, id]
     );
 
     if (result.rows.length === 0)

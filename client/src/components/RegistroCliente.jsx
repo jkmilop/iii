@@ -1,6 +1,7 @@
 import { useFormik } from 'formik';
 import * as Yup from "yup";
 import { Button, FormGroup, TextField } from '@mui/material';
+import React, { useEffect, useState } from "react";
 
 const validationSchema = Yup.object().shape({
     nombre: Yup.string()
@@ -9,8 +10,8 @@ const validationSchema = Yup.object().shape({
     cedula: Yup.number()
         .min(8, "La cedula debe contener al menos 8 digitos")
         .required("La cedula es obligatorio"),
-    direccion: Yup.string().
-    required("La dirección es obligatoria"),
+    correo: Yup.string().email().
+    required("El correo es obligatorio"),
     telefono: Yup.number()
         .required("El número de teléfono es obligatorio")
         .positive("Él número de telefeno es invalido"),
@@ -19,10 +20,12 @@ const validationSchema = Yup.object().shape({
     });
 
 const RegistroCliente = () => {
+    const [cliente, setCliente] = useState({ });
+    
     const formik = useFormik({
         initialValues: {
             nombre: '',
-            direccion: '',
+            correo: '',
             telefono: '',
             cedula: '',
             contraseña: 'foobar',
@@ -46,7 +49,7 @@ const RegistroCliente = () => {
                     <TextField name="telefono" id="telefono" label="Telefono" variant="outlined" value={formik.values.telefono} onChange={formik.handleChange} error={formik.touched.telefono && Boolean(formik.errors.telefono)} helperText={formik.touched.telefono && formik.errors.telefono} />
                 </FormGroup><br />
                 <FormGroup>
-                    <TextField name="direccion" id="direccion" label="Direccion" variant="outlined" value={formik.values.nombre} onChange={formik.handleChange} error={formik.touched.direccion && Boolean(formik.errors.direccion)} helperText={formik.touched.direccion && formik.errors.direccion} />
+                    <TextField name="correo" id="correo" label="correo" variant="outlined" value={formik.values.nombre} onChange={formik.handleChange} error={formik.touched.correo && Boolean(formik.errors.correo)} helperText={formik.touched.correo && formik.errors.correo} />
                 </FormGroup>
                 <br />
                 <FormGroup>

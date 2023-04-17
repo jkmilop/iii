@@ -29,7 +29,7 @@ const TaskForm = () => {
   }, [params.id]);
 
   const loadTask = async (id) => {
-    const res = await fetch("http://localhost:4000/tasks/" + id);
+    const res = await fetch("http://localhost:4000/clientes/" + id);
     const data = await res.json();
     setTask({ title: data.title, description: data.description });
     setEditing(true);
@@ -41,7 +41,7 @@ const TaskForm = () => {
     try {
       if (editing) {
         const response = await fetch(
-          "http://localhost:4000/tasks/" + params.id,
+          "http://localhost:4000/clientes/" + params.id,
           {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
@@ -50,7 +50,7 @@ const TaskForm = () => {
         );
         await response.json();
       } else {
-        const response = await fetch("http://localhost:4000/tasks", {
+        const response = await fetch("http://localhost:4000/clientes", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(task),
@@ -90,33 +90,56 @@ const TaskForm = () => {
             <form onSubmit={handleSubmit}>
               <TextField
                 variant="filled"
-                label="Write your Title"
+                label="Nombre"
                 sx={{
                   display: "block",
                   margin: ".5rem 0",
                 }}
-                name="title"
+                name="nombre"
                 onChange={handleChange}
-                value={task.title}
+                value={task.nombre}
                 inputProps={{ style: { color: "white" } }}
                 InputLabelProps={{ style: { color: "white" } }}
               />
               <TextField
-                variant="outlined"
-                label="Write your Description"
-                multiline
-                rows={4}
+                variant="filled"
+                label="Cedula"
                 sx={{
                   display: "block",
                   margin: ".5rem 0",
                 }}
-                name="description"
+                name="cedula"
                 onChange={handleChange}
-                value={task.description}
+                value={task.cedula}
                 inputProps={{ style: { color: "white" } }}
                 InputLabelProps={{ style: { color: "white" } }}
               />
-
+              <TextField
+                variant="filled"
+                label="telefono"
+                sx={{
+                  display: "block",
+                  margin: ".5rem 0",
+                }}
+                name="Telefono"
+                onChange={handleChange}
+                value={task.telefono}
+                inputProps={{ style: { color: "white" } }}
+                InputLabelProps={{ style: { color: "white" } }}
+              />
+              <TextField
+                variant="filled"
+                label="correo"
+                sx={{
+                  display: "block",
+                  margin: ".5rem 0",
+                }}
+                name="correo"
+                onChange={handleChange}
+                value={task.correo}
+                inputProps={{ style: { color: "white" } }}
+                InputLabelProps={{ style: { color: "white" } }}
+              />
               <Button
                 type="submit"
                 variant="contained"
