@@ -2,6 +2,9 @@ import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import Login from './login/Login'
 import SignUp from './login/SignUp'
+import Cliente from '../components/cliente/Cliente'
+import Emprendedor from './emprendedor/Emprendedor'
+import Negocio from './negocio/Negocio'
 function App() {
   return (
     <Router>
@@ -28,6 +31,9 @@ function App() {
               <Route exact path="/" element={<Login />} />
               <Route path="/sign-in" element={<Login />} />
               <Route path="/sign-up" element={<SignUp />} />
+              <Route path="/clientes" element={<Cliente />} />
+              <Route path="/emprendedor" element={<Emprendedor />} />
+              <Route path="/negocio" element={<Negocio />} />
             </Routes>
           </div>
         </div>
