@@ -4,155 +4,155 @@ const queries = require('../config/queries');
 const getClients = (req, res) => {
     pool.connect();
     pool.query(queries.getClients, (error, result) => {
-        if(!error){
+        if (!error) {
             res.status(200).json(result.rows);
-        }else{
+        } else {
             console.log(error.message);
         }
         pool.end;
     });
 }
 
-function createClientTable (){
+function createClientTable() {
     pool.query(queries.createClient, (error, result) => {
-        if(!error){
+        if (!error) {
             console.log("table created")
-            createEmprendedorTable(); 
-        }else{
+            createEmprendedorTable();
+        } else {
             console.log(error.message);
         }
-    }); 
+    });
 }
 
-function createEmprendedorTable(){
+function createEmprendedorTable() {
     pool.query(queries.createEmprendedor, (error, result) => {
-        if(!error){
+        if (!error) {
             console.log("table created");
             createNegociosTable();
-        }else{
+        } else {
             console.log(error.message);
         }
     });
 }
 
-function createNegociosTable(){
+function createNegociosTable() {
     pool.query(queries.createNegocio, (error, result) => {
-        if(!error){
+        if (!error) {
             console.log("table created")
             createSillaTable();
-        }else{
+        } else {
             console.log(error.message);
         }
     });
 }
 
-function createSillaTable(){
+function createSillaTable() {
     pool.query(queries.createSilla, (error, result) => {
-        if(!error){
-            console.log("table created") 
-            createProductosTable();
-        }else{
-            console.log(error.message);
-        }
-    });
-}
-
-function createProductosTable(){
-    pool.query(queries.createProductos, (error, result) => {
-        if(!error){
-            console.log("table created") 
-            createEventosTable()
-        }else{
-            console.log(error.message);
-        }
-    });
-}
-
-function createEventosTable() {  
-    pool.query(queries.createEvento, (error, result) => {
-        if(!error){
-            console.log("table created") 
-            createBoletaTable(); 
-        }else{
-            console.log(error.message);
-        }
-    });
-}
-
-function createBoletaTable(){
-    pool.query(queries.createBoleta, (error, result) => {
-        if(!error){
-            console.log("table created") 
-            createBoletaProductoTable(); 
-        }else{
-            console.log(error.message);
-        }
-    });
-}
-
-function createBoletaProductoTable(){
-    pool.query(queries.createBoletaProducto, (error, result) => {
-        if(!error){
+        if (!error) {
             console.log("table created")
-        }else{
+            createProductosTable();
+        } else {
             console.log(error.message);
         }
     });
 }
 
-const consultDB =  (req, res) => {
+function createProductosTable() {
+    pool.query(queries.createProductos, (error, result) => {
+        if (!error) {
+            console.log("table created")
+            createEventosTable()
+        } else {
+            console.log(error.message);
+        }
+    });
+}
+
+function createEventosTable() {
+    pool.query(queries.createEvento, (error, result) => {
+        if (!error) {
+            console.log("table created")
+            createBoletaTable();
+        } else {
+            console.log(error.message);
+        }
+    });
+}
+
+function createBoletaTable() {
+    pool.query(queries.createBoleta, (error, result) => {
+        if (!error) {
+            console.log("table created")
+            createBoletaProductoTable();
+        } else {
+            console.log(error.message);
+        }
+    });
+}
+
+function createBoletaProductoTable() {
+    pool.query(queries.createBoletaProducto, (error, result) => {
+        if (!error) {
+            console.log("table created")
+        } else {
+            console.log(error.message);
+        }
+    });
+}
+
+const consultDB = (req, res) => {
     pool.connect();
     pool.query(queries.consultDB, (error, result) => {
-        if(!error){
-            if(result.rowCount === 0){
-                /* Creación de las tablas*/  
-                createClientTable();  
+        if (!error) {
+            if (result.rowCount === 0) {
+                /* Creación de las tablas*/
+                createClientTable();
                 /*  */
             }
-        }else{
+        } else {
             console.log(error.message);
         }
         pool.end;
     });
 }
- 
+
 const addCliente = (req, res) => {
-    const {nombre_cliente, password, cedula, numero_personal, correo_personal} = req.body;
+    const { nombre_cliente, password, cedula, numero_personal, correo_personal } = req.body;
     pool.connect();
     //check if email exist
-    pool.query(queries.checkClienteEmailExists, [correo_personal], (error, result) => { 
+    pool.query(queries.checkClienteEmailExists, [correo_personal], (error, result) => {
         console.log("Result: " + result);
         console.log("Error:" + error);
-        if(result.rows.length){
+        if (result.rows.length) {
             res.send('Email already exist')
             return;
         }
 
         //add client
         pool.query(queries.addCliente, [nombre_cliente, password, cedula, numero_personal, correo_personal], (errors, results) => {
-            if(errors) throw errors;
+            if (errors) throw errors;
             res.status(201).send("Client created successfully");
             console.log('Client created');
         })
         pool.end;
     })
 }
- 
+
 const crearEmprendedor = (req, res) => {
-    const {nombre_emprendedor, password, cedula, numero_personal, correo_personal} = req.body;
+    const { nombre_emprendedor, password, cedula, numero_personal, correo_personal } = req.body;
     pool.connect();
     //check if email exist
-    pool.query(queries.checkEmprendedorEmailExists, [correo_personal], (error, result) => { 
+    pool.query(queries.checkEmprendedorEmailExists, [correo_personal], (error, result) => {
         console.log("Result: " + result);
         console.log("Error:" + error);
-        if(result.rows.length){
+        if (result.rows.length) {
             res.send('Email already exist')
             return
         }
 
         //add client
         pool.query(queries.addEmprendedor, [nombre_emprendedor, password, cedula, numero_personal, correo_personal], (errors, results) => {
-            if(errors) throw errors;
+            if (errors) throw errors;
             res.status(201).send("Emprendedor created successfully");
             console.log('Emprendedor created');
         })

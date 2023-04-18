@@ -1,4 +1,4 @@
-const getClients = 'select * from cliente';
+const getClients = 'SELECT * FROM cliente';
 const checkClienteEmailExists = 'SELECT client FROM cliente client WHERE client.correo_personal = $1';
 const checkEmprendedorEmailExists = 'SELECT emprendedor FROM emprendedor WHERE emprendedor.correo_personal = $1';
 const addCliente = 'INSERT INTO cliente (nombre_cliente, password, cedula, numero_personal, correo_personal) VALUES ($1, $2, $3, $4, $5)';
