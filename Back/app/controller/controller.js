@@ -1,16 +1,13 @@
 const pool = require('../config/db');
 const queries = require('../config/queries');
 
-const getClients = (req, res) => {
-    pool.connect();
-    pool.query(queries.getClients, (error, result) => {
-        if (!error) {
-            res.status(200).json(result.rows);
-        } else {
-            console.log(error.message);
-        }
-        pool.end;
-    });
+const getClients = async (req, res) => {
+    try {
+        const clients = await pool.query(queries.getClients);
+        res.json(clients.rows);
+    } catch (error) {
+        console.error(err.message);
+    }
 }
 
 function createClientTable() {
@@ -116,7 +113,7 @@ const consultDB = (req, res) => {
     });
 }
 
-const addCliente = (req, res) => {
+const addCliente = async (req, res) => {
     const { nombre_cliente, password, cedula, numero_personal, correo_personal } = req.body;
     pool.connect();
     //check if email exist

@@ -8,6 +8,7 @@ const port = process.env.PORT || 3000;
 
 app.set("port", port);
 
+// middleware
 app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
