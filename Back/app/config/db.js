@@ -6,17 +6,13 @@ const pool = new Pool({
     database : process.env.DB_DATABASE || "postgres",
     password : process.env.DB_PASSWORD || "Jucema15",
     port : process.env.DB_PORT || 5432,
+    pool: {
+        max: 5,
+        min: 0,
+        acquire: 30000,
+        idle: 10000
+      }
 })
 
-/* pool.connect();
-
-pool.query(`select * from bd_cliente`, (err, res) => {
-    if(!err){
-        console.log(res.rows);
-    }else{
-        console.log(err.message);
-    }
-    pool.end;
-});
- */
 module.exports = pool;
+

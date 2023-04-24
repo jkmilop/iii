@@ -1,11 +1,14 @@
 const getClients = 'SELECT * FROM cliente';
-const checkClienteEmailExists = 'SELECT client FROM cliente client WHERE client.correo_personal = $1';
+//Clients
+const checkClienteEmailExists = 'SELECT * FROM cliente client WHERE client.correo_personal = $1';
+const addCliente = 'INSERT INTO cliente (nombre_cliente, password, cedula, numero_personal, correo_personal) VALUES ($1, $2, $3, $4, $5) RETURNING *;';
+const createClient = "CREATE TABLE Cliente (cliente_id SERIAL,nombre_cliente varchar(255) NOT NULL, password varchar(255) NOT NULL, cedula bigint NOT NULL,numero_personal bigint,correo_personal varchar(255), PRIMARY KEY (cliente_id)) ";
+//Emprendedor
+const createEmprendedor = "CREATE TABLE Emprendedor (emprendedor_id SERIAL,nombre_emprendedor varchar(255) NOT NULL, password varchar(255) NOT NULL,cedula bigint NOT NULL,numero_personal bigint NOT NULL,correo_personal varchar(255) NOT NULL, PRIMARY KEY (emprendedor_id))";
 const checkEmprendedorEmailExists = 'SELECT emprendedor FROM emprendedor WHERE emprendedor.correo_personal = $1';
-const addCliente = 'INSERT INTO cliente (nombre_cliente, password, cedula, numero_personal, correo_personal) VALUES ($1, $2, $3, $4, $5)';
-const addEmprendedor = 'INSERT INTO emprendedor (nombre_emprendedor, password, cedula, numero_personal, correo_personal) VALUES ($1, $2, $3, $4, $5)';
+const addEmprendedor = 'INSERT INTO emprendedor (nombre_emprendedor, password, cedula, numero_personal, correo_personal) VALUES ($1, $2, $3, $4, $5) RETURNING *';
+
 const consultDB = "select column_name, data_type, is_nullable from information_schema.columns where table_name = 'cliente'";
-const createClient = "CREATE TABLE Cliente (cliente_id SERIAL,nombre_cliente varchar(255) NOT NULL, password varchar(255) NOT NULL, cedula bigint NOT NULL,numero_personal bigint,correo_personal varchar(255),PRIMARY KEY (cliente_id))";
-const createEmprendedor = "CREATE TABLE Emprendedor (emprendedor_id SERIAL,nombre_emprendedor varchar(255) NOT NULL, password varchar(255) NOT NULL,cedula bigint NOT NULL,numero_personal bigint NOT NULL,correo_personal varchar(255) NOT NULL,PRIMARY KEY (emprendedor_id))";
 const createNegocio = "CREATE TABLE Negocio (negocio_id SERIAL,emprendedor_id int NOT NULL,nombre_negocio varchar(255) NOT NULL,direccion varchar(255) NOT NULL,numero_contacto bigint NOT NULL,PRIMARY KEY (negocio_id),FOREIGN KEY (emprendedor_id) REFERENCES Emprendedor(emprendedor_id))";
 const createSilla = "CREATE TABLE Silla (silla_id SERIAL,negocio_id int NOT NULL,valor int NOT NULL,posicion varchar(255) NOT NULL,tipo_silla varchar(255) NOT NULL,PRIMARY KEY (silla_id),FOREIGN KEY (negocio_id) REFERENCES Negocio(negocio_id))";
 const createProductos = "CREATE TABLE Producto (producto_id SERIAL,negocio_id int NOT NULL,nombre_producto varchar(255) NOT NULL,valor int NOT NULL,PRIMARY KEY (producto_id),FOREIGN KEY (negocio_id) REFERENCES Negocio(negocio_id))";

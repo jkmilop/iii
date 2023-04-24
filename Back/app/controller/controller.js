@@ -1,5 +1,119 @@
 const pool = require('../config/db');
 const queries = require('../config/queries');
+const bcrypt = require('bcryptjs');
+const jwtGenerator = require('../utils/jwtGenerator');
+
+const addCliente = async (req, res) => {
+    const { nombre_cliente, password, cedula, numero_personal, correo_personal } = req.body;
+    try {
+        
+        if (!(nombre_cliente && password && cedula && numero_personal && correo_personal)) {
+            res.status(400).send("Se requiere ingresar todos los datos");
+        }
+        //check if email exist
+        try {
+            const clientVerification = await pool.query(queries.checkClienteEmailExists);
+            res.json(clients.rows);
+            if (clientVerification.rows.length > 0){
+                return res.status(401).send("El usuario ya existe.");
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+        
+        const saltRound = 10;
+        const salt = await bcrypt.genSalt(saltRound);
+        
+        const bcryptPassword = await bcrypt.hash(password, salt);
+        
+        //add client
+        try {
+            const newUser = await pool.query(queries.addCliente, [nombre_cliente, bcryptPassword, cedula, numero_personal, correo_personal])
+            const token = jwtGenerator(newUser.rows[0].cliente_id)
+            res.json(token);
+        } catch (error) {
+            console.error(error.message);
+        }
+    } catch (error) {
+        console.error(error.message);    
+        res.status(500).send("Error de servidor");
+    }
+}
+
+const login = async (req, res) => {
+    try {
+        const {correo_personal, password} = req.body;
+        console.log(correo_personal);
+        const user = await pool.query(queries.checkClienteEmailExists,[correo_personal]);
+        console.log(user);
+        if(user.rows.length === 0) {
+            return res.status(401).send("Correo o contraseña incorrecta");
+        }
+
+        const validPass = await bcrypt.compare(
+            password, 
+            user.rows[0].password
+            );
+
+        if(!validPass) {
+            return res.status(401).send("Correo o contraseña incorrecta")
+        }
+
+        const token = jwtGenerator(user.rows[0].cliente_id);
+        res.json(token);
+
+    } catch (error) {
+        console.error(error.message);    
+        res.status(500).send("Error de servidor");
+    }
+}
+
+const isVerify = async (req, res) => {
+    try {
+        res.json(true);
+    } catch (error) {
+        console.error(error.message);    
+        res.status(500).send("Error de servidor");
+    }
+};
+
+const crearEmprendedor = async (req, res) => {  
+    const { nombre_emprendedor, password, cedula, numero_personal, correo_personal } = req.body;
+    try {
+        
+        if (!(nombre_cliente && password && cedula && numero_personal && correo_personal)) {
+            res.status(400).send("Se requiere ingresar todos los datos");
+        }
+        //check if email exist
+        
+        try {
+            const clientVerification = await pool.query(queries.checkEmprendedorEmailExists);
+            res.json(clients.rows);
+            if (clientVerification.rows.length > 0){
+                return res.status(401).send("El usuario ya existe.");
+            }
+        } catch (error) {
+            console.error(error.message);
+        }
+
+        const saltRound = 10;
+        const salt = await bcrypt.genSalt(saltRound);
+        
+        const bcryptPassword = await bcrypt.hash(password, salt);
+
+        //add emprendedor
+        try {
+            const newUser = await pool.query(queries.addEmprendedor, [nombre_emprendedor, bcryptPassword, cedula, numero_personal, correo_personal])
+            res.json(newUser.rows[0]);
+        } catch (error) {
+            console.error(error.message);
+        }    
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Error de servidor");
+    }
+}
+
 
 const getClients = async (req, res) => {
     try {
@@ -98,7 +212,6 @@ function createBoletaProductoTable() {
 }
 
 const consultDB = (req, res) => {
-    pool.connect();
     pool.query(queries.consultDB, (error, result) => {
         if (!error) {
             if (result.rowCount === 0) {
@@ -107,60 +220,17 @@ const consultDB = (req, res) => {
                 /*  */
             }
         } else {
-            console.log(error.message);
+            console.error(error.message);
         }
-        pool.end;
     });
 }
 
-const addCliente = async (req, res) => {
-    const { nombre_cliente, password, cedula, numero_personal, correo_personal } = req.body;
-    pool.connect();
-    //check if email exist
-    pool.query(queries.checkClienteEmailExists, [correo_personal], (error, result) => {
-        console.log("Result: " + result);
-        console.log("Error:" + error);
-        if (result.rows.length) {
-            res.send('Email already exist')
-            return;
-        }
-
-        //add client
-        pool.query(queries.addCliente, [nombre_cliente, password, cedula, numero_personal, correo_personal], (errors, results) => {
-            if (errors) throw errors;
-            res.status(201).send("Client created successfully");
-            console.log('Client created');
-        })
-        pool.end;
-    })
-}
-
-const crearEmprendedor = (req, res) => {
-    const { nombre_emprendedor, password, cedula, numero_personal, correo_personal } = req.body;
-    pool.connect();
-    //check if email exist
-    pool.query(queries.checkEmprendedorEmailExists, [correo_personal], (error, result) => {
-        console.log("Result: " + result);
-        console.log("Error:" + error);
-        if (result.rows.length) {
-            res.send('Email already exist')
-            return
-        }
-
-        //add client
-        pool.query(queries.addEmprendedor, [nombre_emprendedor, password, cedula, numero_personal, correo_personal], (errors, results) => {
-            if (errors) throw errors;
-            res.status(201).send("Emprendedor created successfully");
-            console.log('Emprendedor created');
-        })
-
-        pool.end;
-    })
-}
 
 module.exports = {
     getClients,
     addCliente,
     consultDB,
     crearEmprendedor,
+    login,
+    isVerify,
 }
