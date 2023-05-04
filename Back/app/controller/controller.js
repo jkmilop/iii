@@ -3,12 +3,18 @@ const queries = require('../config/queries');
 const bcrypt = require('bcryptjs');
 const jwtGenerator = require('../utils/jwtGenerator');
 
+/**
+ * @description Función que registra un cliente en la base de datos.
+ * @param {*} req Data enviada desde el Front para ejecutar el servicio.
+ * @param {*} res Información enviada desde el servidor para el Front.
+ * @returns 
+ */
 const addCliente = async (req, res) => {
     const { nombre_cliente, password, cedula, numero_personal, correo_personal } = req.body;
     try {
         
         if (!(nombre_cliente && password && cedula && numero_personal && correo_personal)) {
-            res.status(400).send("Se requiere ingresar todos los datos");
+            res.status(400).send("Se requiere ingresar todos los datos.");
         }
         //check if email exist
         try {
@@ -40,6 +46,13 @@ const addCliente = async (req, res) => {
     }
 }
 
+/**
+ * @description Función que valida las credenciales del usuario con las existentes en la base de datos
+ * para autorizar el inicio de sesión.
+ * @param {*} req Data enviada desde el Front para ejecutar el servicio.
+ * @param {*} res Información enviada desde el servidor para el Front.
+ * @returns 
+ */
 const login = async (req, res) => {
     try {
         const {correo_personal, password} = req.body;
@@ -68,6 +81,12 @@ const login = async (req, res) => {
     }
 }
 
+/**
+ * @description Función que valida el formato de los valores de entrada.
+ * @param {*} req Data enviada desde el Front para ejecutar el servicio.
+ * @param {*} res Información enviada desde el servidor para el Front.
+ * @returns 
+ */
 const isVerify = async (req, res) => {
     try {
         res.json(true);
@@ -77,15 +96,21 @@ const isVerify = async (req, res) => {
     }
 };
 
+/**
+ * @description Función que registra un emprendedor en la base de datos.
+ * @param {*} req Data enviada desde el Front para ejecutar el servicio.
+ * @param {*} res Información enviada desde el servidor para el Front.
+ * @returns 
+ */
 const crearEmprendedor = async (req, res) => {  
     const { nombre_emprendedor, password, cedula, numero_personal, correo_personal } = req.body;
     try {
         
         if (!(nombre_cliente && password && cedula && numero_personal && correo_personal)) {
-            res.status(400).send("Se requiere ingresar todos los datos");
+            res.status(400).send("Se requiere ingresar todos los datos"); 
         }
-        //check if email exist
         
+        //check if email exist
         try {
             const clientVerification = await pool.query(queries.checkEmprendedorEmailExists);
             res.json(clients.rows);
@@ -114,7 +139,12 @@ const crearEmprendedor = async (req, res) => {
     }
 }
 
-
+/**
+ * @description Función que consulta todos los clientes en la base de datos.
+ * @param {*} req Data enviada desde el Front para ejecutar el servicio.
+ * @param {*} res Información enviada desde el servidor para el Front.
+ * @returns 
+ */
 const getClients = async (req, res) => {
     try {
         const clients = await pool.query(queries.getClients);
@@ -124,93 +154,132 @@ const getClients = async (req, res) => {
     }
 }
 
-function createClientTable() {
-    pool.query(queries.createClient, (error, result) => {
-        if (!error) {
-            console.log("table created")
-            createEmprendedorTable();
-        } else {
-            console.log(error.message);
-        }
-    });
+/**
+ * @description Función que crea la tabla de cliente en la base de datos.
+ * @returns 
+ */
+const createClientTable = async () => {
+    try {
+        const clients = await pool.query(queries.createClient);
+        res.json(clients.rows);
+        console.log("table created")
+        createEmprendedorTable;
+    } catch (error) {
+        console.error(error.message);
+    }
 }
 
-function createEmprendedorTable() {
-    pool.query(queries.createEmprendedor, (error, result) => {
-        if (!error) {
-            console.log("table created");
-            createNegociosTable();
-        } else {
-            console.log(error.message);
-        }
-    });
+/**
+ * @description Función que crea la tabla de emprendedor en la base de datos.
+ * @returns 
+ */
+const createEmprendedorTable = async () => {
+    try {
+        const clients = await pool.query(queries.createEmprendedor);
+        res.json(clients.rows);
+        console.log("table created")
+        createNegociosTable;
+    } catch (error) {
+        console.error(error.message);
+    } 
 }
 
-function createNegociosTable() {
-    pool.query(queries.createNegocio, (error, result) => {
-        if (!error) {
-            console.log("table created")
-            createSillaTable();
-        } else {
-            console.log(error.message);
-        }
-    });
+/**
+ * @description Función que crea la tabla de negocio en la base de datos.
+ * @returns 
+ */
+const createNegociosTable= async () => {
+    try {
+        const clients = await pool.query(queries.createNegocio);
+        res.json(clients.rows);
+        console.log("table created")
+        createSillaTable;
+    } catch (error) {
+        console.error(error.message);
+    }
 }
 
-function createSillaTable() {
-    pool.query(queries.createSilla, (error, result) => {
-        if (!error) {
-            console.log("table created")
-            createProductosTable();
-        } else {
-            console.log(error.message);
-        }
-    });
+/**
+ * @description Función que crea la tabla de silla en la base de datos.
+ * @returns 
+ */
+const createSillaTable = async() => {
+    try {
+        const clients = await pool.query(queries.createSilla);
+        res.json(clients.rows);
+        console.log("table created")
+        createProductosTable;
+    } catch (error) {
+        console.error(error.message);
+    } 
 }
 
-function createProductosTable() {
-    pool.query(queries.createProductos, (error, result) => {
-        if (!error) {
-            console.log("table created")
-            createEventosTable()
-        } else {
-            console.log(error.message);
-        }
-    });
+/**
+ * @description Función que crea la tabla de producto en la base de datos.
+ * @returns 
+ */
+const createProductosTable = async () => {
+    try {
+        const clients = await pool.query(queries.createProductos);
+        res.json(clients.rows);
+        console.log("table created")
+        createEventosTable;
+    } catch (error) {
+        console.error(error.message);
+    }  
 }
 
-function createEventosTable() {
-    pool.query(queries.createEvento, (error, result) => {
-        if (!error) {
-            console.log("table created")
-            createBoletaTable();
-        } else {
-            console.log(error.message);
-        }
-    });
+/**
+ * @description Función que crea la tabla de evento en la base de datos.
+ * @returns 
+ */
+const createEventosTable = async () => {
+    try {
+        const clients = await pool.query(queries.createEvento);
+        res.json(clients.rows);
+        console.log("table created")
+        createBoletaTable;
+    } catch (error) {
+        console.error(error.message);
+    } 
 }
 
-function createBoletaTable() {
-    pool.query(queries.createBoleta, (error, result) => {
-        if (!error) {
-            console.log("table created")
-            createBoletaProductoTable();
-        } else {
-            console.log(error.message);
-        }
-    });
+/**
+ * @description Función que crea la tabla de boleta en la base de datos.
+ * @returns 
+ */
+const createBoletaTable = async () => {
+    try {
+        const clients = await pool.query(queries.createBoleta);
+        res.json(clients.rows);
+        console.log("table created")
+        createBoletaProductoTable;
+    } catch (error) {
+        console.error(error.message);
+    }  
 }
 
-function createBoletaProductoTable() {
-    pool.query(queries.createBoletaProducto, (error, result) => {
-        if (!error) {
-            console.log("table created")
-        } else {
-            console.log(error.message);
-        }
-    });
+/**
+ * @description Función que crea la tabla de boleta-producto en la base de datos.
+ * @returns 
+ */
+const createBoletaProductoTable = async() => {
+    try {
+        const clients = await pool.query(queries.createBoletaProducto);
+        res.json(clients.rows);
+        console.log("table created")
+    } catch (error) {
+        console.error(error.message);
+    } 
 }
 
+/**
+ * @description Función que consulta la existencia de tablas en la base de datos
+ * y en caso de no existir tablas inicia la creación de las tablas.
+ * @param {*} req Data enviada desde el Front para ejecutar el servicio.
+ * @param {*} res Información enviada desde el servidor para el Front.
+ * @returns 
+ */
 const consultDB = (req, res) => {
     pool.query(queries.consultDB, (error, result) => {
         if (!error) {

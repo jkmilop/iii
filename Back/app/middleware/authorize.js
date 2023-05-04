@@ -1,6 +1,13 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config;
 
+/**
+ * @description Función que verifica el token.
+ * @param {*} req Data enviada desde el Front para ejecutar el servicio.
+ * @param {*} res Información enviada desde el servidor para el Front.
+ * @param {*} next
+ * @returns 
+ */
 module.exports = async (req, res, next) => {
     try {
         const jwtToken = req.header("token")

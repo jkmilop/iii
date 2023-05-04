@@ -1,3 +1,10 @@
+/**
+ * @description Función que verifica el formato del formulario de creación de cliente y emprendedor.
+ * @param {*} req Data enviada desde el Front para ejecutar el servicio.
+ * @param {*} res Información enviada desde el servidor para el Front.
+ * @param {*} next Información enviada desde el servidor para el Front.
+ * @returns 
+ */
 module.exports = function(req, res, next) {
     const { nombre_cliente, password, cedula, numero_personal, correo_personal } = req.body;
   
