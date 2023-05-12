@@ -16,10 +16,9 @@ const addCliente = async (req, res) => {
         if (!(nombre_cliente && password && cedula && numero_personal && correo_personal)) {
             res.status(400).send("Se requiere ingresar todos los datos.");
         }
-        //check if email exist
+        //check if email exist  
         try {
-            const clientVerification = await pool.query(queries.checkClienteEmailExists);
-            res.json(clients.rows);
+            const clientVerification = await pool.query(queries.checkClienteEmailExists, [correo_personal]);
             if (clientVerification.rows.length > 0){
                 return res.status(401).send("El usuario ya existe.");
             }
@@ -97,6 +96,74 @@ const isVerify = async (req, res) => {
 };
 
 /**
+ * @description Función que registra un negocio en la base de datos.
+ * @param {*} req Data enviada desde el Front para ejecutar el servicio.
+ * @param {*} res Información enviada desde el servidor para el Front.
+ * @returns 
+ */
+const crearNegocio = async (req, res) => {  
+    try {
+        const { emprendedor_id, nombre_negocio, direccion, numero_contacto } = req.body;
+        
+        if (!(emprendedor_id && nombre_negocio && direccion && numero_contacto)) {
+            res.status(400).send("Se requiere ingresar todos los datos.");
+        }
+
+        try {
+            const emprendedorVerification = await pool.query(queries.searchEmprendedor, [emprendedor_id]);
+            if (emprendedorVerification.rows.length === 0){
+                return res.status(401).send("El emprendedor no existe.");
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+        
+        try {
+            const newBusiness = await pool.query(queries.addNegocio, [emprendedor_id, nombre_negocio, direccion, numero_contacto])
+            res.json(newBusiness.rows[0]);
+        } catch (error) {
+            console.error(error.message);
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+/**
+ * @description Función que registra una silla en la base de datos.
+ * @param {*} req Data enviada desde el Front para ejecutar el servicio.
+ * @param {*} res Información enviada desde el servidor para el Front.
+ * @returns 
+ */
+const crearSilla = async (req, res) => {  
+    try {
+        const { negocio_id, valor, posicion, tipo_silla } = req.body;
+        
+        if (!(negocio_id && valor && posicion && tipo_silla)) {
+            res.status(400).send("Se requiere ingresar todos los datos.");
+        }
+
+        try {
+            const negocioVerification = await pool.query(queries.searchNegocio, [negocio_id]);
+            if (negocioVerification.rows.length === 0){
+                return res.status(401).send("El negocio no existe.");
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+
+        try {
+            const newBusiness = await pool.query(queries.addSilla, [negocio_id, valor, posicion, tipo_silla])
+            res.json(newBusiness.rows[0]);
+        } catch (error) {
+            console.error(error.message);
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+/**
  * @description Función que registra un emprendedor en la base de datos.
  * @param {*} req Data enviada desde el Front para ejecutar el servicio.
  * @param {*} res Información enviada desde el servidor para el Front.
@@ -106,15 +173,14 @@ const crearEmprendedor = async (req, res) => {
     const { nombre_emprendedor, password, cedula, numero_personal, correo_personal } = req.body;
     try {
         
-        if (!(nombre_cliente && password && cedula && numero_personal && correo_personal)) {
+        if (!(nombre_emprendedor && password && cedula && numero_personal && correo_personal)) {
             res.status(400).send("Se requiere ingresar todos los datos"); 
         }
         
         //check if email exist
         try {
-            const clientVerification = await pool.query(queries.checkEmprendedorEmailExists);
-            res.json(clients.rows);
-            if (clientVerification.rows.length > 0){
+            const emprendedorVerification = await pool.query(queries.checkEmprendedorEmailExists, [correo_personal]);
+            if (emprendedorVerification.rows.length > 0){
                 return res.status(401).send("El usuario ya existe.");
             }
         } catch (error) {
@@ -147,7 +213,7 @@ const crearEmprendedor = async (req, res) => {
  */
 const getClients = async (req, res) => {
     try {
-        const clients = await pool.query(queries.getClients);
+        const clients = await pool.query(queries.getClientes);
         res.json(clients.rows);
     } catch (error) {
         console.error(err.message);
@@ -302,4 +368,6 @@ module.exports = {
     crearEmprendedor,
     login,
     isVerify,
+    crearNegocio,
+    crearSilla,
 }
