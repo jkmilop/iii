@@ -79,7 +79,7 @@ const login = async (req, res) => {
         res.status(500).send("Error de servidor");
     }
 }
- 
+
 /**
  * @description Función que valida el formato de los valores de entrada.
  * @param {*} req Data enviada desde el Front para ejecutar el servicio.
@@ -94,6 +94,39 @@ const isVerify = async (req, res) => {
         res.status(500).send("Error de servidor");
     }
 };
+
+/**
+ * @description Función que registra un producto en la base de datos.
+ * @param {*} req Data enviada desde el Front para ejecutar el servicio.
+ * @param {*} res Información enviada desde el servidor para el Front.
+ * @returns 
+ */
+const crearProducto = async (req, res) => {  
+    try {
+        const { negocio_id, nombre_producto, valor } = req.body;
+        
+        if (!(negocio_id && nombre_producto && valor)) {
+            res.status(400).send("Se requiere ingresar todos los datos.");
+        }
+
+        try {
+            const negocioVerification = await pool.query(queries.searchNegocio, [negocio_id]);
+            if (negocioVerification.rows.length === 0){
+                return res.status(401).send("El negocio no existe.");
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+        try {
+            const newProduct = await pool.query(queries.addProducto, [negocio_id, nombre_producto, valor])
+            res.json(newProduct.rows[0]);
+        } catch (error) {
+            console.error(error.message);
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
 
 /**
  * @description Función que registra un negocio en la base de datos.
@@ -117,7 +150,6 @@ const crearNegocio = async (req, res) => {
         } catch (error) {
             console.log(error.message);
         }
-        
         try {
             const newBusiness = await pool.query(queries.addNegocio, [emprendedor_id, nombre_negocio, direccion, numero_contacto])
             res.json(newBusiness.rows[0]);
@@ -126,6 +158,40 @@ const crearNegocio = async (req, res) => {
         }
     } catch (error) {
         console.error(error);
+    }
+}
+
+/**
+ * @description Función que consulta un negocio en la base de datos.
+ * @param {*} req Data enviada desde el Front para ejecutar el servicio.
+ * @param {*} res Información enviada desde el servidor para el Front.
+ * @returns 
+ */
+const getNegocioId = async (req, res) => {
+    const {negocio_id} = req.body;
+    try {
+        const negocios = await pool.query(queries.searchNegocio, [negocio_id]);
+        if (negocios.rows.length === 0){
+            return res.status(401).send("El negocio no existe.");
+        }
+        res.json(negocios.rows[0]);
+    } catch (error) {
+        console.error(error.message);
+    }
+}
+
+/**
+ * @description Función que consulta un cliente en la base de datos.
+ * @param {*} req Data enviada desde el Front para ejecutar el servicio.
+ * @param {*} res Información enviada desde el servidor para el Front.
+ * @returns 
+ */
+const getNegocios = async (req, res) => {
+    try {
+        const negocios = await pool.query(queries.getNegocios);
+        res.json(negocios.rows);
+    } catch (err) {
+        console.error(err.message);
     }
 }
 
@@ -162,6 +228,40 @@ const crearSilla = async (req, res) => {
         console.error(error);
     }
 }
+
+/**
+ * @description Función que consulta una silla en la base de datos.
+ * @param {*} req Data enviada desde el Front para ejecutar el servicio.
+ * @param {*} res Información enviada desde el servidor para el Front.
+ * @returns 
+ */
+const getSillaIdByNegocio = async (req, res) => {
+    const {negocio_id} = req.body;
+    try {
+        const sillas = await pool.query(queries.searchSillaByNegocio, [negocio_id]);
+        if (sillas.rows.length === 0){
+            return res.status(401).send("El negocio no existe.");
+        }
+        res.json(sillas.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+}
+
+/**
+ * @description Función que consulta un cliente en la base de datos.
+ * @param {*} req Data enviada desde el Front para ejecutar el servicio.
+ * @param {*} res Información enviada desde el servidor para el Front.
+ * @returns 
+ */
+/* const getSillas = async (req, res) => {
+    try {
+        const negocios = await pool.query(queries.getNegocios);
+        res.json(negocios.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+} */
 
 /**
  * @description Función que registra un emprendedor en la base de datos.
@@ -215,7 +315,60 @@ const getClients = async (req, res) => {
     try {
         const clients = await pool.query(queries.getClientes);
         res.json(clients.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+}
+
+/**
+ * @description Función que consulta un cliente en la base de datos.
+ * @param {*} req Data enviada desde el Front para ejecutar el servicio.
+ * @param {*} res Información enviada desde el servidor para el Front.
+ * @returns 
+ */
+const getClient = async (req, res) => {
+    const { cliente_id } = req.body;
+    try {
+        const clientId = await pool.query(queries.searchCliente, [cliente_id]);
+        if (clientId.rows.length === 0){
+            return res.status(401).send("El cliente no existe.");
+        }
+        res.json(clientId.rows[0]);
+    } catch (err) {
+        console.error(err.message);
+    }
+}
+
+/**
+ * @description Función que consulta todos los emprendedores en la base de datos.
+ * @param {*} req Data enviada desde el Front para ejecutar el servicio.
+ * @param {*} res Información enviada desde el servidor para el Front.
+ * @returns 
+ */
+const getEmprendedores = async (req, res) => {
+    try {
+        const emprendedores = await pool.query(queries.getEmprendedors);
+        res.json(emprendedores.rows);
     } catch (error) {
+        console.error(error.message);
+    }
+}
+
+/**
+ * @description Función que consulta un emprendedor en la base de datos.
+ * @param {*} req Data enviada desde el Front para ejecutar el servicio.
+ * @param {*} res Información enviada desde el servidor para el Front.
+ * @returns 
+ */
+const getEmprendedorId = async (req, res) => {
+    const { emprendedor_id } = req.body;
+    try {
+        const emprendedorId = await pool.query(queries.searchEmprendedor, [emprendedor_id]);
+        if (emprendedorId.rows.length === 0){
+            return res.status(401).send("El emprendedor no existe.");
+        }
+        res.json(emprendedorId.rows);
+    } catch (err) {
         console.error(err.message);
     }
 }
@@ -227,9 +380,9 @@ const getClients = async (req, res) => {
 const createClientTable = async () => {
     try {
         const clients = await pool.query(queries.createClient);
-        res.json(clients.rows);
-        console.log("table created")
-        createEmprendedorTable;
+        console.log(clients.rows);
+        console.log("table created");
+        createEmprendedorTable();
     } catch (error) {
         console.error(error.message);
     }
@@ -239,12 +392,12 @@ const createClientTable = async () => {
  * @description Función que crea la tabla de emprendedor en la base de datos.
  * @returns 
  */
-const createEmprendedorTable = async () => {
+    const createEmprendedorTable = async () => {
+        console.log("Emprendedor")
     try {
         const clients = await pool.query(queries.createEmprendedor);
-        res.json(clients.rows);
         console.log("table created")
-        createNegociosTable;
+        createNegociosTable();
     } catch (error) {
         console.error(error.message);
     } 
@@ -257,9 +410,8 @@ const createEmprendedorTable = async () => {
 const createNegociosTable= async () => {
     try {
         const clients = await pool.query(queries.createNegocio);
-        res.json(clients.rows);
         console.log("table created")
-        createSillaTable;
+        createSillaTable();
     } catch (error) {
         console.error(error.message);
     }
@@ -272,9 +424,8 @@ const createNegociosTable= async () => {
 const createSillaTable = async() => {
     try {
         const clients = await pool.query(queries.createSilla);
-        res.json(clients.rows);
         console.log("table created")
-        createProductosTable;
+        createProductosTable();
     } catch (error) {
         console.error(error.message);
     } 
@@ -287,9 +438,8 @@ const createSillaTable = async() => {
 const createProductosTable = async () => {
     try {
         const clients = await pool.query(queries.createProductos);
-        res.json(clients.rows);
         console.log("table created")
-        createEventosTable;
+        createEventosTable();
     } catch (error) {
         console.error(error.message);
     }  
@@ -302,9 +452,8 @@ const createProductosTable = async () => {
 const createEventosTable = async () => {
     try {
         const clients = await pool.query(queries.createEvento);
-        res.json(clients.rows);
         console.log("table created")
-        createBoletaTable;
+        createBoletaTable();
     } catch (error) {
         console.error(error.message);
     } 
@@ -317,9 +466,8 @@ const createEventosTable = async () => {
 const createBoletaTable = async () => {
     try {
         const clients = await pool.query(queries.createBoleta);
-        res.json(clients.rows);
         console.log("table created")
-        createBoletaProductoTable;
+        createBoletaProductoTable();
     } catch (error) {
         console.error(error.message);
     }  
@@ -332,7 +480,6 @@ const createBoletaTable = async () => {
 const createBoletaProductoTable = async() => {
     try {
         const clients = await pool.query(queries.createBoletaProducto);
-        res.json(clients.rows);
         console.log("table created")
     } catch (error) {
         console.error(error.message);
@@ -370,4 +517,11 @@ module.exports = {
     isVerify,
     crearNegocio,
     crearSilla,
+    getClient,
+    getEmprendedores,
+    getEmprendedorId,
+    getNegocioId,
+    getNegocios,
+    getSillaIdByNegocio,
+    crearProducto,
 }
