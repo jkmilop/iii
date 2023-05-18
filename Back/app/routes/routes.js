@@ -32,5 +32,20 @@ router.get('/sillaid', controller.getSillaIdByNegocio); //Consultar todos los em
 
 //Producto
 router.post('/producto', /* authorize, */ controller.crearProducto); //Crear producto
+router.post('/productos', controller.getProductoByNegocio); //Consultar todos los productos de un negocio
+
+//Evento
+router.post('/evento', /* authorize, */ controller.addEvento); //Crear evento
+router.get('/eventoid', controller.getEventoId); //Consultar evento por id
+router.get('/eventos', controller.getEventos); //Consultar todos los eventos
+
+//Boleta
+router.post('/boleta', /* authorize, */ controller.addBoleta); //Crear boleta
+router.get('/boletacliente', controller.getBoletaByCliente); //Consultar boleta por cliente
+
+//BoletaProducto
+router.post('/boletaproducto', /* authorize, */ controller.addBoletaProducto); //Crear boletaProducto
+router.get('/boletadetalle', controller.searchBoletaProducto); //Consultar los detalles de una boleta
+
 
 module.exports = router;

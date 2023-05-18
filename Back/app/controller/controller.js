@@ -129,6 +129,25 @@ const crearProducto = async (req, res) => {
 }
 
 /**
+ * @description Función que consulta un producto en la base de datos.
+ * @param {*} req Data enviada desde el Front para ejecutar el servicio.
+ * @param {*} res Información enviada desde el servidor para el Front.
+ * @returns 
+ */
+const getProductoByNegocio = async (req, res) => {
+    const {negocio_id} = req.body;
+    try {
+        const negocios = await pool.query(queries.searchProductoByNegocio, [negocio_id]);
+        if (negocios.rows.length === 0){
+            return res.status(401).send("El negocio no existe.");
+        }
+        res.json(negocios.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+}
+
+/**
  * @description Función que registra un negocio en la base de datos.
  * @param {*} req Data enviada desde el Front para ejecutar el servicio.
  * @param {*} res Información enviada desde el servidor para el Front.
@@ -230,6 +249,213 @@ const crearSilla = async (req, res) => {
 }
 
 /**
+ * @description Función que registra un evento en la base de datos.
+ * @param {*} req Data enviada desde el Front para ejecutar el servicio.
+ * @param {*} res Información enviada desde el servidor para el Front.
+ * @returns 
+ */
+const addEvento = async (req, res) => {  
+    try {
+        const { negocio_id, fecha_hora, nombre_evento } = req.body;
+        
+        if (!(negocio_id && fecha_hora && nombre_evento)) {
+            res.status(400).send("Se requiere ingresar todos los datos.");
+        }
+
+        try {
+            const negocioVerification = await pool.query(queries.searchNegocio, [negocio_id]);
+            if (negocioVerification.rows.length === 0){
+                return res.status(401).send("El negocio no existe.");
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+
+        try {
+            const newEvent = await pool.query(queries.addEvento, [negocio_id, fecha_hora, nombre_evento])
+            res.json(newEvent.rows[0]);
+        } catch (error) {
+            console.error(error.message);
+        }
+    } catch (error) {
+        console.error(error);
+    }
+} 
+
+/**
+ * @description Función que consulta un evento en la base de datos.
+ * @param {*} req Data enviada desde el Front para ejecutar el servicio.
+ * @param {*} res Información enviada desde el servidor para el Front.
+ * @returns 
+ */
+const getEventoId = async (req, res) => {
+    const {evento_id} = req.body;
+    try {
+        const evento = await pool.query(queries.searchEvento, [evento_id]);
+        if (evento.rows.length === 0){
+            return res.status(401).send("El evento no existe.");
+        }
+        res.json(evento.rows[0]);
+    } catch (error) {
+        console.error(error.message);
+    }
+}
+
+/**
+ * @description Función que consulta los eventos en la base de datos.
+ * @param {*} req Data enviada desde el Front para ejecutar el servicio.
+ * @param {*} res Información enviada desde el servidor para el Front.
+ * @returns 
+ */
+const getEventos = async (req, res) => {
+    try {
+        const eventos = await pool.query(queries.getEvento);
+        res.json(eventos.rows);
+    } catch (err) {
+        console.error(err.message);
+    }
+}
+
+/**
+ * @description Función que registra un boleto en la base de datos.
+ * @param {*} req Data enviada desde el Front para ejecutar el servicio.
+ * @param {*} res Información enviada desde el servidor para el Front.
+ * @returns 
+ */
+const addBoleta = async (req, res) => {  
+    try {
+        const { evento_id ,silla_id ,cliente_id ,fecha_hora ,valor_boleta } = req.body;
+        
+        if (!(evento_id && silla_id && cliente_id && fecha_hora && valor_boleta)) {
+            res.status(400).send("Se requiere ingresar todos los datos.");
+        }
+
+        try {
+            const clienteVerification = await pool.query(queries.searchCliente, [cliente_id]);
+            if (clienteVerification.rows.length === 0){
+                return res.status(401).send("El cliente no existe.");
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+
+        try {
+            const eventoVerification = await pool.query(queries.searchEvento, [evento_id]);
+            if (eventoVerification.rows.length === 0){
+                return res.status(401).send("El evento no existe.");
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+
+        try {
+            const sillaVerification = await pool.query(queries.searchSilla, [silla_id]);
+            if (sillaVerification.rows.length === 0){
+                return res.status(401).send("La silla no existe.");
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+
+        try {
+            const newBoleta = await pool.query(queries.addBoleta, [evento_id ,silla_id ,cliente_id ,fecha_hora ,valor_boleta])
+            res.json(newBoleta.rows[0]);
+        } catch (error) {
+            console.error(error.message);
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+/**
+ * @description Función que registra un boleto en la base de datos.
+ * @param {*} req Data enviada desde el Front para ejecutar el servicio.
+ * @param {*} res Información enviada desde el servidor para el Front.
+ * @returns 
+ */
+const addBoletaProducto = async (req, res) => {  
+    try {
+        const { boleta_id, producto_id ,cantidad_producto } = req.body;
+        
+        if (!(boleta_id && producto_id && cantidad_producto)) {
+            res.status(400).send("Se requiere ingresar todos los datos.");
+        }
+
+        try {
+            const productoVerification = await pool.query(queries.searchProducto, [producto_id]);
+            if (productoVerification.rows.length === 0){
+                return res.status(401).send("La boleta no existe.");
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+
+        try {
+            const boletaVerification = await pool.query(queries.searchBoleta, [boleta_id]);
+            if (boletaVerification.rows.length === 0){
+                return res.status(401).send("La boleta no existe.");
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+
+        try {
+            const newBoletaProducto = await pool.query(queries.addBoletaProducto, [boleta_id, producto_id ,cantidad_producto])
+            res.json(newBoletaProducto.rows[0]);
+        } catch (error) {
+            console.error(error.message);
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+/**
+ * @description Función que consulta una silla en la base de datos.
+ * @param {*} req Data enviada desde el Front para ejecutar el servicio.
+ * @param {*} res Información enviada desde el servidor para el Front.
+ * @returns 
+ */
+const getBoletaByCliente = async (req, res) => {
+    const {cliente_id} = req.body;
+    if (!( cliente_id )) {
+        res.status(400).send("Se requiere ingresar el id de la boleta y el id del cliente.");
+    }
+    try {
+        const boletas = await pool.query(queries.searchBoletas, [cliente_id]);
+        if (boletas.rows.length === 0){
+            return res.status(401).send("El cliente no existe.");
+        }
+        res.json(boletas.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+}
+
+/**
+ * @description Función que consulta una silla en la base de datos.
+ * @param {*} req Data enviada desde el Front para ejecutar el servicio.
+ * @param {*} res Información enviada desde el servidor para el Front.
+ * @returns 
+ */
+const searchBoletaProducto = async (req, res) => {
+    const {boleta_id} = req.body;
+    if (!( boleta_id )) {
+        res.status(400).send("Se requiere ingresar el id de la boleta y el id del cliente.");
+    }
+    try {
+        const boletas = await pool.query(queries.searchBoletaProducto, [boleta_id]);
+        if (boletas.rows.length === 0){
+            return res.status(401).send("El la boleta no existe.");
+        }
+        res.json(boletas.rows);
+    } catch (error) {
+        console.error(error.message);
+    }
+}
+
+/**
  * @description Función que consulta una silla en la base de datos.
  * @param {*} req Data enviada desde el Front para ejecutar el servicio.
  * @param {*} res Información enviada desde el servidor para el Front.
@@ -247,21 +473,6 @@ const getSillaIdByNegocio = async (req, res) => {
         console.error(error.message);
     }
 }
-
-/**
- * @description Función que consulta un cliente en la base de datos.
- * @param {*} req Data enviada desde el Front para ejecutar el servicio.
- * @param {*} res Información enviada desde el servidor para el Front.
- * @returns 
- */
-/* const getSillas = async (req, res) => {
-    try {
-        const negocios = await pool.query(queries.getNegocios);
-        res.json(negocios.rows);
-    } catch (err) {
-        console.error(err.message);
-    }
-} */
 
 /**
  * @description Función que registra un emprendedor en la base de datos.
@@ -524,4 +735,13 @@ module.exports = {
     getNegocios,
     getSillaIdByNegocio,
     crearProducto,
+    getProductoByNegocio,
+    addEvento,
+    getEventoId,
+    getEventos,
+    addBoleta,
+    addBoletaProducto,
+    getBoletaByCliente,
+    searchBoletaProducto,
+
 }
