@@ -1,5 +1,8 @@
 const pool = require('../config/db');
 const queries = require('../config/queries'); 
+const bcrypt = require('bcryptjs');
+const jwtGenerator = require('../utils/jwtGenerator');
+
 
 /**
  * @description Función que registra un emprendedor en la base de datos.
@@ -14,7 +17,6 @@ const crearEmprendedor = async (req, res) => {
         if (!(nombre_emprendedor && password && cedula && numero_personal && correo_personal)) {
             res.status(400).send("Se requiere ingresar todos los datos"); 
         }
-        
         //check if email exist
         try {
             const emprendedorVerification = await pool.query(queries.checkEmprendedorEmailExists, [correo_personal]);
