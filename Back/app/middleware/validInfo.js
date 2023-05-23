@@ -12,7 +12,7 @@ module.exports = function(req, res, next) {
       return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(userEmail);
     }
 
-    if (req.path === "/register") {
+    if (req.path === "/cliente") {
       console.log(!email.length);
       if (![nombre_cliente, password, cedula, numero_personal, correo_personal].every(Boolean)) {
         return res.json("Faltan credenciales");

@@ -58,6 +58,7 @@ const isVerify = async (req, res) => {
  * @returns 
  */
 const createClientTable = async () => {
+    console.log("asdasdasd")
     try {
         const clients = await pool.query(queries.createClient);
         console.log(clients.rows);
@@ -174,7 +175,8 @@ const createBoletaProductoTable = async() => {
  * @returns 
  */
 const consultDB = (req, res) => {
-    pool.query(queries.consultDB, (error, result) => {
+    pool.query(queries.consultDB, (error, result) => { 
+        console.log(error);
         if (!error) {
             if (result.rowCount === 0) {
                 /* Creación de las tablas*/

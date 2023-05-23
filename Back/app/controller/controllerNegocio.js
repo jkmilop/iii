@@ -62,6 +62,8 @@ const getNegocioId = async (req, res) => {
 const getNegocios = async (req, res) => {
     try {
         const negocios = await pool.query(queries.getNegocios);
+        console.log("nombre_emprendedor")
+
         res.json(negocios.rows);
     } catch (err) {
         console.error(err.message);
