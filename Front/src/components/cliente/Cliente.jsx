@@ -1,55 +1,92 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { DataGrid } from '@mui/x-data-grid';
-
-const columns = [
-  { field: 'id', headerName: 'ID', width: 70 },
-  {
-    field: 'nombre',
-    headerName: 'Nombre',
-    description: 'This column has a value getter and is not sortable.',
-    sortable: false,
-    width: 160,
-    valueGetter: (params) =>
-      `${params.row.firstName || ''} ${params.row.lastName || ''}`,
-  },
-
-  {
-    field: 'cedula',
-    headerName: 'Cedula',
-    type: 'number',
-    width: 90,
-  },
-  {
-    field: 'telefono',
-    headerName: 'Telefono',
-    type: 'number',
-    width: 90,
-  },
-
-];
-
+import React, { useEffect, useMemo, useState } from 'react';
+import { useTable, useFilters, useGlobalFilter } from 'react-table';
+import { Table, Thead, Tbody, Tr, Th, Td, Input } from '@chakra-ui/react';
 
 export default function Cliente() {
-  const [rows, setRows] = useState([]);
+  const [data, setData] = useState([]);
+  const [filterInput, setFilterInput] = useState('');
+
+  const columns = useMemo(
+    () => [
+      { Header: 'ID', accessor: 'cliente_id' }, // ID del cliente
+      { Header: 'Nombre', accessor: 'nombre_cliente' }, // Nombre del cliente
+      { Header: 'Cedula', accessor: 'cedula', type: 'number' }, // Cédula del cliente (tipo número)
+      { Header: 'Numero', accessor: 'numero_personal', type: 'number' }, // Número personal del cliente (tipo número)
+      { Header: 'Correo', accessor: 'correo_personal', type: 'email' }, // Correo personal del cliente (tipo email)
+    ],
+    []
+  );
+
   const fetchClientes = async () => {
-    await axios
-      .get("http://localhost:3000/cliente")
-      .then((res) => setRows(res.data.clientes));
+    try {
+      const response = await fetch('http://localhost:3000/clientes');
+      const jsonData = await response.json();
+      setData(jsonData);
+    } catch (err) {
+      console.error(err.message);
+    }
   };
 
   useEffect(() => {
     fetchClientes();
   }, []);
+
+  const handleFilterChange = (e) => {
+    const value = e.target.value || '';
+    setFilterInput(value);
+  };
+
+  const filteredData = useMemo(() => {
+    return data.filter((row) => {
+      return (
+        row.cliente_id.toString().includes(filterInput.toLowerCase()) ||
+        row.nombre_cliente.toLowerCase().includes(filterInput.toLowerCase()) ||
+        row.cedula.toString().includes(filterInput.toLowerCase()) ||
+        row.numero_personal.toString().includes(filterInput.toLowerCase()) ||
+        row.correo_personal.toLowerCase().includes(filterInput.toLowerCase())
+      );
+    });
+  }, [data, filterInput]);
+
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+  } = useTable({ columns, data: filteredData }, useFilters, useGlobalFilter);
+
   return (
-    <div style={{ height: 400, width: '100%' }}>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        pageSize={5}
-        rowsPerPageOptions={[5]}
-        checkboxSelection
+    <>
+      <Input
+        value={filterInput || ''}
+        onChange={handleFilterChange}
+        placeholder="Buscar en todos los campos..."
+        mb={4}
       />
-    </div>
+      <Table {...getTableProps()} width="100%">
+        <Thead>
+          {headerGroups.map((headerGroup) => (
+            <Tr {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map((column) => (
+                <Th {...column.getHeaderProps()}>{column.render('Header')}</Th>
+              ))}
+            </Tr>
+          ))}
+        </Thead>
+        <Tbody {...getTableBodyProps()}>
+          {rows.map((row) => {
+            prepareRow(row);
+            return (
+              <Tr {...row.getRowProps()}>
+                {row.cells.map((cell) => (
+                  <Td {...cell.getCellProps()}>{cell.render('Cell')}</Td>
+                ))}
+              </Tr>
+            );
+          })}
+        </Tbody>
+      </Table>
+    </>
   );
 }
