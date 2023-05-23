@@ -1,18 +1,21 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTable, useFilters, useGlobalFilter } from 'react-table';
-import { Table, Thead, Tbody, Tr, Th, Td, Input } from '@chakra-ui/react';
+import { Table, Thead, Tbody, Tr, Th, Td, Input, IconButton } from '@chakra-ui/react';
+import { AddIcon } from '@chakra-ui/icons';
+import SignUp from '../login/SignUp';
 
 export default function Cliente() {
   const [data, setData] = useState([]);
   const [filterInput, setFilterInput] = useState('');
+  const [showSignUp, setShowSignUp] = useState(false);
 
   const columns = useMemo(
     () => [
-      { Header: 'ID', accessor: 'cliente_id' }, // ID del cliente
-      { Header: 'Nombre', accessor: 'nombre_cliente' }, // Nombre del cliente
-      { Header: 'Cedula', accessor: 'cedula', type: 'number' }, // Cédula del cliente (tipo número)
-      { Header: 'Numero', accessor: 'numero_personal', type: 'number' }, // Número personal del cliente (tipo número)
-      { Header: 'Correo', accessor: 'correo_personal', type: 'email' }, // Correo personal del cliente (tipo email)
+      { Header: 'ID', accessor: 'cliente_id' },
+      { Header: 'Nombre', accessor: 'nombre_cliente' },
+      { Header: 'Cedula', accessor: 'cedula', type: 'number' },
+      { Header: 'Numero', accessor: 'numero_personal', type: 'number' },
+      { Header: 'Correo', accessor: 'correo_personal', type: 'email' },
     ],
     []
   );
@@ -56,6 +59,14 @@ export default function Cliente() {
     prepareRow,
   } = useTable({ columns, data: filteredData }, useFilters, useGlobalFilter);
 
+  const handleAddCliente = () => {
+    setShowSignUp(true);
+  };
+
+  const handleCloseSignUp = () => {
+    setShowSignUp(false);
+  };
+
   return (
     <>
       <Input
@@ -64,6 +75,15 @@ export default function Cliente() {
         placeholder="Buscar en todos los campos..."
         mb={4}
       />
+
+      <IconButton
+        icon={<AddIcon />}
+        aria-label="Agregar Cliente"
+        colorScheme="blue"
+        onClick={handleAddCliente}
+        mb={4}
+      />
+
       <Table {...getTableProps()} width="100%">
         <Thead>
           {headerGroups.map((headerGroup) => (
@@ -87,6 +107,8 @@ export default function Cliente() {
           })}
         </Tbody>
       </Table>
+
+      {showSignUp && <SignUp onClose={handleCloseSignUp} />}
     </>
   );
 }
