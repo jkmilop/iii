@@ -18,27 +18,18 @@ const crearEmprendedor = async (req, res) => {
             res.status(400).send("Se requiere ingresar todos los datos"); 
         }
         //check if email exist
-        try {
-            const emprendedorVerification = await pool.query(queries.checkEmprendedorEmailExists, [correo_personal]);
-            if (emprendedorVerification.rows.length > 0){
-                return res.status(401).send("El usuario ya existe.");
-            }
-        } catch (error) {
-            console.error(error.message);
-        }
+        const emprendedorVerification = await pool.query(queries.checkEmprendedorEmailExists, [correo_personal]);
+        if (emprendedorVerification.rows.length > 0){
+            return res.status(401).json({error: "El usuario ya existe."});
+        } 
 
         const saltRound = 10;
         const salt = await bcrypt.genSalt(saltRound);
-        
         const bcryptPassword = await bcrypt.hash(password, salt);
 
         //add emprendedor
-        try {
-            const newUser = await pool.query(queries.addEmprendedor, [nombre_emprendedor, bcryptPassword, cedula, numero_personal, correo_personal])
-            res.json(newUser.rows[0]);
-        } catch (error) {
-            console.error(error.message);
-        }    
+        const newUser = await pool.query(queries.addEmprendedor, [nombre_emprendedor, bcryptPassword, cedula, numero_personal, correo_personal])
+        res.json(newUser.rows[0]);
     } catch (error) {
         console.error(error.message);
         res.status(500).send("Error de servidor");
@@ -80,8 +71,43 @@ const getEmprendedorId = async (req, res) => {
     }
 }
 
+/**
+ * @description Función que actualiza un emprendedor en la base de datos.
+ * @param {*} req Data enviada desde el Front para ejecutar el servicio.
+ * @param {*} res Información enviada desde el servidor para el Front.
+ * @returns 
+ */
+const updateEmprendedor = async (req, res) => {
+    const body = req.body;
+    const {emprendedor_id} = req.body;
+    console.log(body)
+    var query = "UPDATE emprendedor SET";
+    var campos = Object.keys(body);
+    var length = campos.length;
+    var count = 2;
+    for(const key in body){
+        if(key !== 'emprendedor_id'){
+            console.log(typeof body[key]);
+            query += ` ${key} = `+ `'${body[key]}'`;
+            if(count < length){
+                query += ",";
+                count++;
+            }
+        }
+    }
+    query += ` WHERE emprendedor_id = ${emprendedor_id}`
+    console.log(query);
+    try {
+        const emprendedor = await pool.query(query); 
+        res.json(emprendedor.rows[0]);
+    } catch (err) {
+        console.error(err.message);
+    }
+}
+
 module.exports = {
     crearEmprendedor,
     getEmprendedores,
+    updateEmprendedor,
     getEmprendedorId
 }
