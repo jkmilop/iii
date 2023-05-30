@@ -86,7 +86,7 @@ const updateEmprendedor = async (req, res) => {
     var length = campos.length;
     var count = 2;
     for(const key in body){
-        if(key !== 'emprendedor_id'){
+        if(key !== 'emprendedor_id' || body[key] !== "" || body[key] !== null){
             console.log(typeof body[key]);
             query += ` ${key} = `+ `'${body[key]}'`;
             if(count < length){
