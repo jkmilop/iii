@@ -23,11 +23,13 @@ router.post('/is-verify', /* authorize, */ controller.isVerify); //Verificacion 
 router.post('/cliente', controllerCliente.addCliente); //Crear cliente
 router.get('/clientes', controllerCliente.getClients); //Consultar todos los clientes
 router.get('/clienteid', controllerCliente.getClient); //Consultar un cliente
+router.post('/updatecliente', controllerCliente.updateClient); //Actualizar un cliente
 
 //Emprendedor
 router.post('/emprendedor', controllerEmprendedor.crearEmprendedor); //Crear emprendedor
 router.get('/emprendedors', controllerEmprendedor.getEmprendedores); //Consultar todos los emprendedores
 router.get('/emprendedorid', controllerEmprendedor.getEmprendedorId); //Consultar un emprendedor por id
+router.post('/updateemprendedor', controllerEmprendedor.updateEmprendedor); //Actualizar un cliente
 
 //Negocio
 router.post('/negocio',  controllerNegocio.crearNegocio);
