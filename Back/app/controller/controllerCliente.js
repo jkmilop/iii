@@ -9,7 +9,7 @@ const jwtGenerator = require('../utils/jwtGenerator');
  * @param {*} res Información enviada desde el servidor para el Front.
  * @returns 
  */
-const addCliente = async (req, res) => {
+const addCliente = async (req, res) => { 
     const { nombre_cliente, password, cedula, numero_personal, correo_personal } = req.body;
     try {
         
@@ -23,7 +23,7 @@ const addCliente = async (req, res) => {
                 return res.status(401).send("El usuario ya existe.");
             }
         } catch (error) {
-            console.log(error.message);
+            console.error(error.message);
         }
         
         const saltRound = 10;
@@ -34,7 +34,7 @@ const addCliente = async (req, res) => {
         //add client
         try {
             const newUser = await pool.query(queries.addCliente, [nombre_cliente, bcryptPassword, cedula, numero_personal, correo_personal])
-            const token = jwtGenerator(newUser.rows[0].cliente_id)
+            const token = jwtGenerator(newUser.rows[0].cliente_id);
             res.json(token);
         } catch (error) {
             console.error(error.message);
@@ -82,6 +82,5 @@ const getClient = async (req, res) => {
 module.exports = {
     getClients,
     addCliente,
-    getClient,
-    
+    getClient
 }
