@@ -4,14 +4,11 @@ import {
   FormLabel,
   Input,
   Button,
-  Text,
-  Link,
   VStack,
-  Box,
   FormErrorMessage,
 } from '@chakra-ui/react';
 
-const SignUp = ({ onSaveCliente }) => {
+const FCliente = ({ onSaveCliente }) => {
   const [formData, setFormData] = useState({
     nombre_cliente: '',
     password: '',
@@ -150,4 +147,4 @@ const SignUp = ({ onSaveCliente }) => {
   );
 };
 
-export default SignUp;
+export default FCliente;

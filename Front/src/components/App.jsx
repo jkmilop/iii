@@ -5,6 +5,7 @@ import Login from './login/Login';
 import SignUp from './login/SignUp';
 import Cliente from './cliente/Cliente';
 import Negocio from './negocio/Negocio';
+import Emprendedor from './emprendedor/Emprendedor';
 
 function Navbar() {
   return (
@@ -34,7 +35,8 @@ function App() {
               <Route path="/sign-in" element={<Login />} />
               <Route path="/sign-up" element={<SignUp />} />
               <Route path="/clientes" element={<Cliente />} />
-              <Route path="/negocio" element={<Negocio />} />
+              <Route path="/negocios" element={<Negocio />} />
+              <Route path="/emprendedores" element={<Emprendedor />} />
 
             </Routes>
           </Box>

@@ -1,13 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTable, useFilters, useGlobalFilter } from 'react-table';
-import { Table, Thead, Tbody, Tr, Th, Td, Input, IconButton } from '@chakra-ui/react';
-import { AddIcon } from '@chakra-ui/icons';
-import SignUp from '../login/SignUp';
+import { Table, Thead, Tbody, Tr, Th, Td, Input, Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton } from '@chakra-ui/react';
+import FCliente from '../utils/FCliente';
 
 export default function Cliente() {
   const [data, setData] = useState([]);
   const [filterInput, setFilterInput] = useState('');
-  const [showSignUp, setShowSignUp] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedCliente, setSelectedCliente] = useState(null);
 
   const columns = useMemo(
     () => [
@@ -16,6 +16,11 @@ export default function Cliente() {
       { Header: 'Cedula', accessor: 'cedula', type: 'number' },
       { Header: 'Numero', accessor: 'numero_personal', type: 'number' },
       { Header: 'Correo', accessor: 'correo_personal', type: 'email' },
+      { Header: 'Acciones', accessor: 'actions', Cell: ({ row }) => (
+        <>
+          <Button size="sm" colorScheme="teal" onClick={() => handleUpdateCliente(row.original)}>Actualizar</Button>
+        </>
+      )},
     ],
     []
   );
@@ -40,16 +45,62 @@ export default function Cliente() {
   };
 
   const filteredData = useMemo(() => {
+    if (!data) {
+      return [];
+    }
+  
     return data.filter((row) => {
       return (
-        row.cliente_id.toString().includes(filterInput.toLowerCase()) ||
-        row.nombre_cliente.toLowerCase().includes(filterInput.toLowerCase()) ||
-        row.cedula.toString().includes(filterInput.toLowerCase()) ||
-        row.numero_personal.toString().includes(filterInput.toLowerCase()) ||
-        row.correo_personal.toLowerCase().includes(filterInput.toLowerCase())
+        row.cliente_id &&
+        row.nombre_cliente &&
+        row.cedula &&
+        row.numero_personal &&
+        row.correo_personal &&
+        (row.cliente_id.toString().includes(filterInput.toLowerCase()) ||
+          row.nombre_cliente.toLowerCase().includes(filterInput.toLowerCase()) ||
+          row.cedula.toString().includes(filterInput.toLowerCase()) ||
+          row.numero_personal.toString().includes(filterInput.toLowerCase()) ||
+          row.correo_personal.toLowerCase().includes(filterInput.toLowerCase()))
       );
     });
   }, [data, filterInput]);
+  
+  const handleAddCliente = () => {
+    setShowModal(true);
+    setSelectedCliente(null);
+  };
+
+  const handleSaveCliente = async (newCliente) => {
+    try {
+      const response = await fetch('http://localhost:3000/cliente', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newCliente)
+      });
+
+      if (response.ok) {
+        const token = await response.json();
+        // Process the token or perform any necessary actions
+        console.log(token);
+        setData((prevData) => [...prevData, newCliente]);
+        setShowModal(false);
+      } else {
+        const errorData = await response.json();
+        // Handle the error response as needed
+        console.error(errorData);
+      }
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  const handleUpdateCliente = (cliente) => {
+    setSelectedCliente(cliente);
+    setShowModal(true);
+  };
+
 
   const {
     getTableProps,
@@ -59,31 +110,35 @@ export default function Cliente() {
     prepareRow,
   } = useTable({ columns, data: filteredData }, useFilters, useGlobalFilter);
 
-  const handleAddCliente = () => {
-    setShowSignUp(true);
-  };
-
-  const handleCloseSignUp = () => {
-    setShowSignUp(false);
-  };
-
   return (
     <>
+      <Button onClick={handleAddCliente} mb={4}>
+        Agregar Cliente
+      </Button>
+      <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Sign Up</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FCliente
+              onSaveCliente={(newCliente) => handleSaveCliente(newCliente)}
+              cliente={selectedCliente}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={() => setShowModal(false)}>
+              Cerrar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <Input
         value={filterInput || ''}
         onChange={handleFilterChange}
-        placeholder="Buscar en todos los campos..."
+        placeholder="Buscar estudiante"
         mb={4}
       />
-
-      <IconButton
-        icon={<AddIcon />}
-        aria-label="Agregar Cliente"
-        colorScheme="blue"
-        onClick={handleAddCliente}
-        mb={4}
-      />
-
       <Table {...getTableProps()} width="100%">
         <Thead>
           {headerGroups.map((headerGroup) => (
@@ -107,8 +162,6 @@ export default function Cliente() {
           })}
         </Tbody>
       </Table>
-
-      {showSignUp && <SignUp onClose={handleCloseSignUp} />}
     </>
   );
 }
