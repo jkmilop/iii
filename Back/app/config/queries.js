@@ -9,7 +9,7 @@ const searchCliente = 'SELECT cliente_id, nombre_cliente, cedula, numero_persona
 
 //Emprendedor
 const createEmprendedor = "CREATE TABLE Emprendedor (emprendedor_id SERIAL,nombre_emprendedor varchar(255) NOT NULL, password varchar(255) NOT NULL,cedula bigint NOT NULL,numero_personal bigint NOT NULL,correo_personal varchar(255) NOT NULL, PRIMARY KEY (emprendedor_id))";
-const checkEmprendedorEmailExists = 'SELECT emprendedor FROM emprendedor WHERE emprendedor.correo_personal = $1';
+const checkEmprendedorEmailExists = 'SELECT * FROM emprendedor WHERE emprendedor.correo_personal = $1';
 const addEmprendedor = 'INSERT INTO emprendedor (nombre_emprendedor, password, cedula, numero_personal, correo_personal) VALUES ($1, $2, $3, $4, $5) RETURNING *';
 const searchEmprendedor = 'SELECT emprendedor_id, nombre_emprendedor, cedula, numero_personal, correo_personal FROM emprendedor WHERE emprendedor.emprendedor_id = $1';
 const getEmprendedors = 'SELECT * FROM emprendedor';

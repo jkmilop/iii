@@ -85,9 +85,9 @@ const updateClient = async (req, res) => {
     var query = "UPDATE cliente SET";
     var campos = Object.keys(body);
     var length = campos.length;
-    var count = 2;
+    var count = 1;
     for(const key in body){
-        if(key !== 'cliente_id' || body[key] !== "" || body[key] !== null){
+        if(key !== 'cliente_id' || body[key] !== "" || body[key] !== null || key !== 'password'){
             console.log(typeof body[key]);
             query += ` ${key} = `+ `'${body[key]}'`;
             if(count < length){
