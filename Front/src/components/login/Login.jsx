@@ -52,7 +52,7 @@ export default function Login() {
     <form>
       <FormControl mb={3}>
         <FormLabel>Correo</FormLabel>
-        <Input type="correo_personal" value={correo_personal} onChange={(e) => setCorreo(e.target.value)} />
+        <Input type="email" value={correo_personal} onChange={(e) => setCorreo(e.target.value)} />
       </FormControl>
       <FormControl mb={3}>
         <FormLabel>Contraseña</FormLabel>
@@ -65,6 +65,9 @@ export default function Login() {
       </FormControl>
       <Button colorScheme="blue" size="lg" mt={4} mb={3} onClick={handleLogin}>
         Ingresar
+      </Button>
+      <Button colorScheme="blue" size="lg" mt={4} mb={3} onClick={handleVerify}>
+        Verificar
       </Button>
       <Text textAlign="right">
         Aún no tienes una cuenta? <Link href="/sign-up">Regístrate</Link>

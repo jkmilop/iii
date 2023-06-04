@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useTable, useFilters, useGlobalFilter } from 'react-table';
 import { Table, Thead, Tbody, Tr, Th, Td, Input, Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton } from '@chakra-ui/react';
 import FCliente from '../utils/FCliente';
+import SignUp from '../login/SignUp';
 
 export default function Cliente() {
   const [data, setData] = useState([]);
@@ -16,11 +17,15 @@ export default function Cliente() {
       { Header: 'Cedula', accessor: 'cedula', type: 'number' },
       { Header: 'Numero', accessor: 'numero_personal', type: 'number' },
       { Header: 'Correo', accessor: 'correo_personal', type: 'email' },
-      { Header: 'Acciones', accessor: 'actions', Cell: ({ row }) => (
-        <>
-          <Button size="sm" colorScheme="teal" onClick={() => handleUpdateCliente(row.original)}>Actualizar</Button>
-        </>
-      )},
+      {
+        Header: 'Acciones',
+        accessor: 'actions',
+        Cell: ({ row }) => (
+          <>
+            <Button size="sm" colorScheme="teal" onClick={() => handleUpdateCliente(row.original)}>Actualizar</Button>
+          </>
+        ),
+      },
     ],
     []
   );
@@ -48,7 +53,7 @@ export default function Cliente() {
     if (!data) {
       return [];
     }
-  
+
     return data.filter((row) => {
       return (
         row.cliente_id &&
@@ -64,27 +69,52 @@ export default function Cliente() {
       );
     });
   }, [data, filterInput]);
-  
+
   const handleAddCliente = () => {
     setShowModal(true);
     setSelectedCliente(null);
   };
 
+  const handleUpdateCliente = async (cliente) => {
+    setSelectedCliente(cliente);
+    setShowModal(true);
+  };
+  
   const handleSaveCliente = async (newCliente) => {
     try {
-      const response = await fetch('http://localhost:3000/cliente', {
-        method: 'POST',
+      let url = 'http://localhost:3000/cliente';
+      let method = 'POST';
+  
+      if (selectedCliente) {
+        url = `http://localhost:3000/updatecliente/${selectedCliente.cliente_id}`;
+        method = 'POST';
+      }
+  
+      const response = await fetch(url, {
+        method,
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(newCliente)
+        body: JSON.stringify(newCliente),
       });
-
+  
       if (response.ok) {
         const token = await response.json();
         // Process the token or perform any necessary actions
         console.log(token);
-        setData((prevData) => [...prevData, newCliente]);
+        setData((prevData) => {
+          if (selectedCliente) {
+            // Update existing cliente in the data array
+            return prevData.map((cliente) => {
+              if (cliente.cliente_id === selectedCliente.cliente_id) {
+                return { ...cliente, ...newCliente };
+              }
+              return cliente;
+            });
+          }
+          // Add new cliente to the data array
+          return [...prevData, newCliente];
+        });
         setShowModal(false);
       } else {
         const errorData = await response.json();
@@ -95,13 +125,7 @@ export default function Cliente() {
       console.error(err.message);
     }
   };
-
-  const handleUpdateCliente = (cliente) => {
-    setSelectedCliente(cliente);
-    setShowModal(true);
-  };
-
-
+  
   const {
     getTableProps,
     getTableBodyProps,
@@ -118,13 +142,14 @@ export default function Cliente() {
       <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Sign Up</ModalHeader>
+          <ModalHeader>Registro</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <FCliente
-              onSaveCliente={(newCliente) => handleSaveCliente(newCliente)}
-              cliente={selectedCliente}
-            />
+            {selectedCliente ? (
+              <FCliente onSaveCliente={handleSaveCliente} cliente={selectedCliente} />
+            ) : (
+              <SignUp onSaveCliente={handleSaveCliente} />
+            )}
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="blue" mr={3} onClick={() => setShowModal(false)}>

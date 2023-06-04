@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   FormControl,
   FormLabel,
@@ -8,7 +8,7 @@ import {
   FormErrorMessage,
 } from '@chakra-ui/react';
 
-const FCliente = ({ onSaveCliente }) => {
+const FCliente = ({ onSaveCliente, cliente }) => {
   const [formData, setFormData] = useState({
     nombre_cliente: '',
     password: '',
@@ -17,6 +17,21 @@ const FCliente = ({ onSaveCliente }) => {
     correo_personal: '',
   });
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    if (cliente) {
+      setFormData(cliente);
+    } else {
+      setFormData({
+        nombre_cliente: '',
+        password: '',
+        cedula: '',
+        numero_personal: '',
+        correo_personal: '',
+      });
+    }
+    setErrors({});
+  }, [cliente]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -44,10 +59,9 @@ const FCliente = ({ onSaveCliente }) => {
       setErrors(validationErrors);
     }
   };
-  
+
   const validateForm = () => {
     let validationErrors = {};
-
 
     if (!formData.nombre_cliente.trim()) {
       validationErrors.nombre_cliente = 'Nombre del cliente es requerido';
@@ -139,10 +153,9 @@ const FCliente = ({ onSaveCliente }) => {
         </FormControl>
 
         <Button type="submit" colorScheme="blue">
-          Registrarme
+          {cliente ? 'Actualizar' : 'Guardar'}
         </Button>
       </VStack>
-
     </form>
   );
 };

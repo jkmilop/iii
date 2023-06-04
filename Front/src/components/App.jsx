@@ -6,6 +6,7 @@ import SignUp from './login/SignUp';
 import Cliente from './cliente/Cliente';
 import Negocio from './negocio/Negocio';
 import Emprendedor from './emprendedor/Emprendedor';
+import ReservarSillas from './reserva/ReservarSillas';
 
 function Navbar() {
   return (
@@ -37,7 +38,7 @@ function App() {
               <Route path="/clientes" element={<Cliente />} />
               <Route path="/negocios" element={<Negocio />} />
               <Route path="/emprendedores" element={<Emprendedor />} />
-
+              <Route path="/reserva" element={<ReservarSillas />} />
             </Routes>
           </Box>
         </>
