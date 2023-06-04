@@ -7,5 +7,10 @@
     "jsonwebtoken": "^9.0.0",
     "morgan": "^1.10.0",
     "pg": "^8.10.0"
+  },
+  "scripts": {
+    "test": "jest"
   }
+  
 }
+

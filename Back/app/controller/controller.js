@@ -13,9 +13,7 @@ const jwtGenerator = require('../utils/jwtGenerator');
 const login = async (req, res) => {
     try {
         const {correo_personal, password} = req.body;
-        console.log(correo_personal);
         const user = await pool.query(queries.checkClienteEmailExists,[correo_personal]);
-        console.log(user);
         if(user.rows.length === 0) {
             return res.status(401).send("Correo o contraseña incorrecta");
         }
@@ -58,10 +56,8 @@ const isVerify = async (req, res) => {
  * @returns 
  */
 const createClientTable = async () => {
-    console.log("asdasdasd")
     try {
         const clients = await pool.query(queries.createClient);
-        console.log(clients.rows);
         console.log("table created");
         createEmprendedorTable();
     } catch (error) {
@@ -74,9 +70,8 @@ const createClientTable = async () => {
  * @returns 
  */
     const createEmprendedorTable = async () => {
-        console.log("Emprendedor")
     try {
-        const clients = await pool.query(queries.createEmprendedor);
+        const emprendedor = await pool.query(queries.createEmprendedor);
         console.log("table created")
         createNegociosTable();
     } catch (error) {
@@ -90,7 +85,7 @@ const createClientTable = async () => {
  */
 const createNegociosTable= async () => {
     try {
-        const clients = await pool.query(queries.createNegocio);
+        const negocio = await pool.query(queries.createNegocio);
         console.log("table created")
         createSillaTable();
     } catch (error) {
@@ -104,7 +99,7 @@ const createNegociosTable= async () => {
  */
 const createSillaTable = async() => {
     try {
-        const clients = await pool.query(queries.createSilla);
+        const silla = await pool.query(queries.createSilla);
         console.log("table created")
         createProductosTable();
     } catch (error) {
@@ -118,7 +113,7 @@ const createSillaTable = async() => {
  */
 const createProductosTable = async () => {
     try {
-        const clients = await pool.query(queries.createProductos);
+        const producto = await pool.query(queries.createProductos);
         console.log("table created")
         createEventosTable();
     } catch (error) {
@@ -132,7 +127,7 @@ const createProductosTable = async () => {
  */
 const createEventosTable = async () => {
     try {
-        const clients = await pool.query(queries.createEvento);
+        const evento = await pool.query(queries.createEvento);
         console.log("table created")
         createBoletaTable();
     } catch (error) {
@@ -146,7 +141,7 @@ const createEventosTable = async () => {
  */
 const createBoletaTable = async () => {
     try {
-        const clients = await pool.query(queries.createBoleta);
+        const boleta = await pool.query(queries.createBoleta);
         console.log("table created")
         createBoletaProductoTable();
     } catch (error) {
@@ -160,7 +155,7 @@ const createBoletaTable = async () => {
  */
 const createBoletaProductoTable = async() => {
     try {
-        const clients = await pool.query(queries.createBoletaProducto);
+        const boletaProducto = await pool.query(queries.createBoletaProducto);
         console.log("table created")
     } catch (error) {
         console.error(error.message);
@@ -176,7 +171,6 @@ const createBoletaProductoTable = async() => {
  */
 const consultDB = (req, res) => {
     pool.query(queries.consultDB, (error, result) => { 
-        console.log(error);
         if (!error) {
             if (result.rowCount === 0) {
                 /* Creación de las tablas*/
