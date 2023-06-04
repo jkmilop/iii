@@ -84,7 +84,7 @@ const updateEmprendedor = async (req, res) => {
     var query = "UPDATE emprendedor SET";
     var campos = Object.keys(body);
     var length = campos.length;
-    var count = 2;
+    var count = 1;
     for(const key in body){
         if(key !== 'emprendedor_id' || body[key] !== "" || body[key] !== null){
             console.log(typeof body[key]);
