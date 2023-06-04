@@ -15,9 +15,12 @@ const login = async (req, res) => {
         const {correo_personal, password} = req.body;
         const user = await pool.query(queries.checkClienteEmailExists,[correo_personal]);
         if(user.rows.length === 0) {
-            return res.status(401).send("Correo o contraseña incorrecta");
+            const user = await pool.query(queries.checkEmprendedorEmailExists,[correo_personal]);
+            if(user.rows.length === 0) {
+                return res.status(401).send("Correo o contraseña incorrecta");
+            }
         }
-
+        
         const validPass = await bcrypt.compare(
             password, 
             user.rows[0].password
