@@ -1,37 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   FormControl,
   FormLabel,
   Input,
   Button,
+  Text,
+  Link,
   VStack,
+  Box,
   FormErrorMessage,
 } from '@chakra-ui/react';
 
-const FEmprendedor = ({ onSaveEmprendedor, emprendedor }) => {
+const RegistroCliente = ({ onSaveCliente }) => {
   const [formData, setFormData] = useState({
-    emprendedor_id: '',
     nombre_emprendedor: '',
+    password: '',
     cedula: '',
     numero_personal: '',
     correo_personal: '',
   });
   const [errors, setErrors] = useState({});
-
-  useEffect(() => {
-    if (emprendedor) {
-      setFormData(emprendedor);
-    } else {
-      setFormData({
-        emprendedor_id: '',
-        nombre_emprendedor: '',
-        cedula: '',
-        numero_personal: '',
-        correo_personal: '',
-      });
-    }
-    setErrors({});
-  }, [emprendedor]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -45,11 +33,11 @@ const FEmprendedor = ({ onSaveEmprendedor, emprendedor }) => {
     e.preventDefault();
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length === 0) {
-      // Call the onSaveEmprendedor function and pass the formData
-      onSaveEmprendedor(formData);
+      // Call the onSaveCliente function and pass the formData
+      onSaveCliente(formData);
       setFormData({
-        emprendedor_id: '',
         nombre_emprendedor: '',
+        password: '',
         cedula: '',
         numero_personal: '',
         correo_personal: '',
@@ -59,33 +47,38 @@ const FEmprendedor = ({ onSaveEmprendedor, emprendedor }) => {
       setErrors(validationErrors);
     }
   };
-
+  
   const validateForm = () => {
     let validationErrors = {};
 
+
     if (!formData.nombre_emprendedor.trim()) {
-      validationErrors.nombre_emprendedor = 'El nombre del emprendedor es requerido';
+      validationErrors.nombre_emprendedor = 'Nombre del cliente es requerido';
     }
 
     if (!formData.cedula.trim()) {
-      validationErrors.cedula = 'La cédula es requerida';
+      validationErrors.cedula = 'Cedula es requerida';
     }
 
     if (!formData.numero_personal.trim()) {
-      validationErrors.numero_personal = 'El número personal es requerido';
+      validationErrors.numero_personal = 'Número personal es requerido';
     }
 
     if (!formData.correo_personal.trim()) {
-      validationErrors.correo_personal = 'El correo personal es requerido';
+      validationErrors.correo_personal = 'Correo personal es requerido';
     } else if (!isValidEmail(formData.correo_personal)) {
       validationErrors.correo_personal = 'Ingrese un correo válido';
+    }
+
+    if (!formData.password.trim()) {
+      validationErrors.password = 'Contraseña es requerida';
     }
 
     return validationErrors;
   };
 
   const isValidEmail = (email) => {
-    // Basic email validation logic
+    // Lógica básica de validación de correo electrónico
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
@@ -137,12 +130,24 @@ const FEmprendedor = ({ onSaveEmprendedor, emprendedor }) => {
           <FormErrorMessage>{errors.correo_personal}</FormErrorMessage>
         </FormControl>
 
+        <FormControl isInvalid={!!errors.password}>
+          <FormLabel>Contraseña</FormLabel>
+          <Input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleInputChange}
+          />
+          <FormErrorMessage>{errors.password}</FormErrorMessage>
+        </FormControl>
+
         <Button type="submit" colorScheme="blue">
-          {emprendedor ? 'Actualizar' : 'Guardar'}
+          Registrarme
         </Button>
       </VStack>
+
     </form>
   );
 };
 
-export default FEmprendedor;
+export default RegistroCliente;
