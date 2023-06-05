@@ -43,11 +43,15 @@ const crearProducto = async (req, res) => {
 const getProductoByNegocio = async (req, res) => {
     const {negocio_id} = req.body;
     try {
-        const negocios = await pool.query(queries.searchProductoByNegocio, [negocio_id]);
-        if (negocios.rows.length === 0){
+        const negocio = await pool.query(queries.searchNegocio, [negocio_id]);
+        if (negocio.rows.length === 0){
             return res.status(401).send("El negocio no existe.");
         }
-        res.json(negocios.rows);
+        const productos = await pool.query(queries.searchProductoByNegocio, [negocio_id]);
+        if (productos.rows.length === 0){
+            return res.status(401).send("El negocio no tiene productos creados.");
+        }
+        res.json(productos.rows);
     } catch (error) {
         console.error(error.message);
     }
