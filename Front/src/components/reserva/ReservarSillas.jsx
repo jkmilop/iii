@@ -9,16 +9,10 @@ export default function ReservarSillas() {
   const [valor, setValor] = useState(50000);
 
   const toggleSilla = (fila, columna) => {
-    const isSelected = sillas[fila][columna];
-
-    if (isSelected) {
-      return;
-    }
-
     setSillas((prevSillas) => {
       const newSillas = prevSillas.map((filaSillas, rowIndex) =>
         filaSillas.map((silla, columnIndex) =>
-          rowIndex === fila && columnIndex === columna ? true : silla
+          rowIndex === fila && columnIndex === columna ? !silla : silla
         )
       );
       return newSillas;
@@ -28,7 +22,13 @@ export default function ReservarSillas() {
       setShowButton(true);
     }
 
-    setSelectedBoxes((prevSelectedBoxes) => [...prevSelectedBoxes, { fila, columna }]);
+    setSelectedBoxes((prevSelectedBoxes) => {
+      const isBoxSelected = sillas[fila][columna];
+      const updatedBoxes = isBoxSelected
+        ? prevSelectedBoxes.filter((box) => box.fila !== fila || box.columna !== columna)
+        : [...prevSelectedBoxes, { fila, columna }];
+      return updatedBoxes;
+    });
   };
 
   const renderSillas = () => {
@@ -39,9 +39,9 @@ export default function ReservarSillas() {
             key={columnIndex}
             w="40px"
             h="40px"
-            bg={silla ? 'green.400' : selectedBoxes.find((box) => box.fila === rowIndex && box.columna === columnIndex) ? 'gray.400' : 'gray.200'}
+            bg={silla ? 'green.400' : 'gray.200'}
             onClick={() => toggleSilla(rowIndex, columnIndex)}
-            cursor={silla || selectedBoxes.find((box) => box.fila === rowIndex && box.columna === columnIndex) ? 'not-allowed' : 'pointer'}
+            cursor="pointer"
             _hover={{ bg: silla ? 'green.300' : 'gray.300' }}
           ></Box>
         ))}
@@ -50,16 +50,7 @@ export default function ReservarSillas() {
   };
 
   const handleReservar = () => {
-    setSelectedBoxes([]);
-    setShowButton(false);
     setShowModal(true);
-    setSillas((prevSillas) => {
-      const newSillas = [...prevSillas];
-      selectedBoxes.forEach((box) => {
-        newSillas[box.fila][box.columna] = 'red';
-      });
-      return newSillas;
-    });
   };
 
   const closeModal = () => {
@@ -99,9 +90,7 @@ export default function ReservarSillas() {
             <Button colorScheme="blue" mr={3} onClick={closeModal}>
               Cancelar
             </Button>
-            <Button variant="ghost" onClick={closeModal}>
-              Reservar
-            </Button>
+            <Button variant="ghost">Reservar</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
