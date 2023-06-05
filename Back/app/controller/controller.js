@@ -11,6 +11,9 @@ const jwtGenerator = require('../utils/jwtGenerator');
  * @returns 
  */
 const login = async (req, res) => {
+    if(Array.isArray(req.body) && req.body !== 'object'){
+        return res.status(400).send("Se requiere ingresar un JSON"); 
+    } 
     try {
         const {correo_personal, password} = req.body;
         const user = await pool.query(queries.checkClienteEmailExists,[correo_personal]);

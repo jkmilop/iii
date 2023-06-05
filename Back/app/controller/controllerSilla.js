@@ -7,7 +7,10 @@ const queries = require('../config/queries');
  * @param {*} res Información enviada desde el servidor para el Front.
  * @returns 
  */
-const crearSilla = async (req, res) => {  
+const crearSilla = async (req, res) => { 
+    if(Array.isArray(req.body) && req.body !== 'object'){
+        return res.status(400).send("Se requiere ingresar un JSON"); 
+    } 
     try {
         const { negocio_id, valor, posicion, tipo_silla } = req.body;
         
@@ -42,6 +45,9 @@ const crearSilla = async (req, res) => {
  * @returns 
  */
 const getSillaIdByNegocio = async (req, res) => {
+    if(Array.isArray(req.body) && req.body !== 'object'){
+        return res.status(400).send("Se requiere ingresar un JSON"); 
+    } 
     const {negocio_id} = req.body;
     try {
         const sillas = await pool.query(queries.searchSillaByNegocio, [negocio_id]);
