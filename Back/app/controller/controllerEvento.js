@@ -8,7 +8,7 @@ const queries = require('../config/queries');
  * @returns 
  */
 const addEvento = async (req, res) => { 
-    if(Array.isArray(req.body)){
+    if(Array.isArray(req.body) || req.body !== 'object'){
         return res.status(400).send("Se requiere ingresar un JSON"); 
     } 
     try {
@@ -45,9 +45,9 @@ const addEvento = async (req, res) => {
  * @returns 
  */
 const getEventoId = async (req, res) => {
-    if(Array.isArray(req.body)){
+    if(Array.isArray(req.body) || req.body !== 'object'){
         return res.status(400).send("Se requiere ingresar un JSON"); 
-    }
+    } 
     const {evento_id} = req.body;
     try {
         const evento = await pool.query(queries.searchEvento, [evento_id]);

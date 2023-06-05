@@ -10,9 +10,9 @@ const jwtGenerator = require('../utils/jwtGenerator');
  * @returns 
  */
 const addCliente = async (req, res) => {
-    if(Array.isArray(req.body)){
+    if(Array.isArray(req.body) || req.body !== 'object'){
         return res.status(400).send("Se requiere ingresar un JSON"); 
-    }
+    } 
     const { nombre_cliente, password, cedula, numero_personal, correo_personal } = req.body;
     try {
         
@@ -62,9 +62,9 @@ const getClients = async (req, res) => {
  * @returns 
  */
 const getClient = async (req, res) => {
-    if(Array.isArray(req.body)){
+    if(Array.isArray(req.body) || req.body !== 'object'){
         return res.status(400).send("Se requiere ingresar un JSON"); 
-    }
+    } 
     const { cliente_id } = req.body;
     try {
         const clientId = await pool.query(queries.searchCliente, [cliente_id]);
@@ -84,9 +84,9 @@ const getClient = async (req, res) => {
  * @returns 
  */
 const updateClient = async (req, res) => {
-    if(Array.isArray(req.body)){
+    if(Array.isArray(req.body) || req.body !== 'object'){
         return res.status(400).send("Se requiere ingresar un JSON"); 
-    }
+    } 
     const body = req.body;
     const {cliente_id} = req.body;
     console.log(body)
