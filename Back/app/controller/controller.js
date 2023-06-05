@@ -11,7 +11,7 @@ const jwtGenerator = require('../utils/jwtGenerator');
  * @returns 
  */
 const login = async (req, res) => {
-    if(Array.isArray(req.body) || req.body !== 'object'){
+    if(Array.isArray(req.body) && req.body !== 'object'){
         return res.status(400).send("Se requiere ingresar un JSON"); 
     } 
     try {

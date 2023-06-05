@@ -8,7 +8,7 @@ const queries = require('../config/queries');
  * @returns 
  */
 const crearProducto = async (req, res) => {  
-    if(Array.isArray(req.body) || req.body !== 'object'){
+    if(Array.isArray(req.body) && req.body !== 'object'){
         return res.status(400).send("Se requiere ingresar un JSON"); 
     } 
     try {
@@ -44,7 +44,7 @@ const crearProducto = async (req, res) => {
  * @returns 
  */
 const getProductoByNegocio = async (req, res) => {
-    if(Array.isArray(req.body) || req.body !== 'object'){
+    if(Array.isArray(req.body) && req.body !== 'object'){
         return res.status(400).send("Se requiere ingresar un JSON"); 
     } 
     const {negocio_id} = req.body;

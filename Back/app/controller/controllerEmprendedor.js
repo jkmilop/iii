@@ -11,7 +11,7 @@ const jwtGenerator = require('../utils/jwtGenerator');
  * @returns 
  */
 const crearEmprendedor = async (req, res) => {  
-    if(Array.isArray(req.body) || req.body !== 'object'){
+    if(Array.isArray(req.body) && req.body !== 'object'){
         return res.status(400).send("Se requiere ingresar un JSON"); 
     } 
     const { nombre_emprendedor, password, cedula, numero_personal, correo_personal } = req.body;
@@ -62,7 +62,7 @@ const getEmprendedores = async (req, res) => {
  * @returns 
  */
 const getEmprendedorId = async (req, res) => {
-    if(Array.isArray(req.body) || req.body !== 'object'){
+    if(Array.isArray(req.body) && req.body !== 'object'){
         return res.status(400).send("Se requiere ingresar un JSON"); 
     } 
     const { emprendedor_id } = req.body;
@@ -84,7 +84,7 @@ const getEmprendedorId = async (req, res) => {
  * @returns 
  */
 const updateEmprendedor = async (req, res) => {
-    if(Array.isArray(req.body) || req.body !== 'object'){
+    if(Array.isArray(req.body) && req.body !== 'object'){
         return res.status(400).send("Se requiere ingresar un JSON"); 
     } 
     const body = req.body;
