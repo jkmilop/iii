@@ -1,6 +1,23 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTable, useFilters, useGlobalFilter } from 'react-table';
-import { Table, Thead, Tbody, Tr, Th, Td, Input, Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton } from '@chakra-ui/react';
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Input,
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  Stack,
+} from '@chakra-ui/react';
 import FCliente from '../utils/FCliente';
 import SignUp from '../login/SignUp';
 
@@ -21,9 +38,10 @@ export default function Cliente() {
         Header: 'Acciones',
         accessor: 'actions',
         Cell: ({ row }) => (
-          <>
-            <Button size="sm" colorScheme="teal" onClick={() => handleUpdateCliente(row.original)}>Actualizar</Button>
-          </>
+          <Button size="sm" colorScheme="teal" onClick={() => handleUpdateCliente(row.original)}>
+            Actualizar
+          </Button>
+          
         ),
       },
     ],
@@ -79,14 +97,14 @@ export default function Cliente() {
     setSelectedCliente(cliente);
     setShowModal(true);
   };
-  
+
   const handleSaveCliente = async (newCliente) => {
     try {
-      let url = 'http://localhost:3000/cliente';
+      let url = 'http://localhost:3000/clientes';
       let method = 'POST';
   
       if (selectedCliente) {
-        url = `http://localhost:3000/updatecliente/${selectedCliente.cliente_id}`;
+        url = 'http://localhost:3000/updatecliente';
         method = 'POST';
       }
   
@@ -99,21 +117,21 @@ export default function Cliente() {
       });
   
       if (response.ok) {
-        const token = await response.json();
-        // Process the token or perform any necessary actions
-        console.log(token);
+        const updatedCliente = await response.json();
         setData((prevData) => {
           if (selectedCliente) {
             // Update existing cliente in the data array
-            return prevData.map((cliente) => {
+            const updatedData = prevData.map((cliente) => {
               if (cliente.cliente_id === selectedCliente.cliente_id) {
-                return { ...cliente, ...newCliente };
+                return { ...cliente, ...updatedCliente };
               }
               return cliente;
             });
+            return updatedData;
           }
           // Add new cliente to the data array
-          return [...prevData, newCliente];
+          const newData = [...prevData, updatedCliente];
+          return newData;
         });
         setShowModal(false);
       } else {
@@ -135,33 +153,14 @@ export default function Cliente() {
   } = useTable({ columns, data: filteredData }, useFilters, useGlobalFilter);
 
   return (
-    <>
+    <Stack spacing={4}>
       <Button onClick={handleAddCliente} mb={4}>
         Agregar Cliente
       </Button>
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Registro</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            {selectedCliente ? (
-              <FCliente onSaveCliente={handleSaveCliente} cliente={selectedCliente} />
-            ) : (
-              <SignUp onSaveCliente={handleSaveCliente} />
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={() => setShowModal(false)}>
-              Cerrar
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
       <Input
         value={filterInput || ''}
         onChange={handleFilterChange}
-        placeholder="Buscar estudiante"
+        placeholder="Buscar cliente"
         mb={4}
       />
       <Table {...getTableProps()} width="100%">
@@ -187,6 +186,25 @@ export default function Cliente() {
           })}
         </Tbody>
       </Table>
-    </>
+      <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Registro</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {selectedCliente ? (
+              <FCliente onSaveCliente={handleSaveCliente} cliente={selectedCliente} />
+            ) : (
+              <SignUp onSaveCliente={handleSaveCliente} />
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={() => setShowModal(false)}>
+              Cerrar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </Stack>
   );
 }

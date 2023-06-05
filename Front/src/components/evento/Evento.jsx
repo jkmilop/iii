@@ -1,44 +1,27 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTable, useFilters, useGlobalFilter } from 'react-table';
-import {
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  Input,
-  Button,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  Stack,
-} from '@chakra-ui/react';
-import FNegocio from '../utils/FNegocio';
+import { Table, Thead, Tbody, Tr, Th, Td, Input, Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Stack } from '@chakra-ui/react';
+import FEvento from '../utils/FEveneto';
 
-export default function Negocio() {
+export default function Evento() {
   const [data, setData] = useState([]);
   const [filterInput, setFilterInput] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [selectedNegocio, setSelectedNegocio] = useState(null);
+  const [selectedEvento, setSelectedEvento] = useState(null);
 
   const columns = useMemo(
     () => [
-      { Header: 'ID', accessor: 'negocio_id' },
-      { Header: 'Nombre', accessor: 'nombre_negocio' },
-      { Header: 'Dirección', accessor: 'direccion' },
-      { Header: 'Número de Contacto', accessor: 'numero_contacto' },
+      { Header: 'ID', accessor: 'evento_id' },
+      { Header: 'Negocio ID', accessor: 'negocio_id' },
+      { Header: 'Fecha y Hora', accessor: 'fecha_hora' },
+      { Header: 'Nombre del Evento', accessor: 'nombre_evento' },
     ],
     []
   );
 
-  const fetchNegocios = async () => {
+  const fetchEventos = async () => {
     try {
-      const response = await fetch('http://localhost:3000/negocios');
+      const response = await fetch('http://localhost:3000/eventos');
       const jsonData = await response.json();
       setData(jsonData);
     } catch (err) {
@@ -47,7 +30,7 @@ export default function Negocio() {
   };
 
   useEffect(() => {
-    fetchNegocios();
+    fetchEventos();
   }, []);
 
   const handleFilterChange = (e) => {
@@ -62,30 +45,30 @@ export default function Negocio() {
 
     return data.filter((row) => {
       return (
+        row.evento_id &&
         row.negocio_id &&
-        row.nombre_negocio &&
-        row.direccion &&
-        row.numero_contacto &&
-        (row.negocio_id.toString().includes(filterInput.toLowerCase()) ||
-          row.nombre_negocio.toLowerCase().includes(filterInput.toLowerCase()) ||
-          row.direccion.toLowerCase().includes(filterInput.toLowerCase()) ||
-          row.numero_contacto.toString().includes(filterInput.toLowerCase()))
+        row.fecha_hora &&
+        row.nombre_evento &&
+        (row.evento_id.toString().includes(filterInput.toLowerCase()) ||
+          row.negocio_id.toString().includes(filterInput.toLowerCase()) ||
+          row.fecha_hora.toLowerCase().includes(filterInput.toLowerCase()) ||
+          row.nombre_evento.toLowerCase().includes(filterInput.toLowerCase()))
       );
     });
   }, [data, filterInput]);
 
-  const handleAddNegocio = () => {
+  const handleAddEvento = () => {
     setShowModal(true);
-    setSelectedNegocio(null);
+    setSelectedEvento(null);
   };
 
-  const handleSaveNegocio = async (newNegocio) => {
+  const handleSaveEvento = async (newEvento) => {
     try {
-      let url = 'http://localhost:3000/negocios';
+      let url = 'http://localhost:3000/eventos';
       let method = 'POST';
 
-      if (selectedNegocio) {
-        url = 'http://localhost:3000/updatenegocio';
+      if (selectedEvento) {
+        url = 'http://localhost:3000/updateevento';
         method = 'POST';
       }
 
@@ -94,23 +77,23 @@ export default function Negocio() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(newNegocio),
+        body: JSON.stringify(newEvento),
       });
 
       if (response.ok) {
-        const updatedNegocio = await response.json();
+        const updatedEvento = await response.json();
         setData((prevData) => {
-          if (selectedNegocio) {
-            // Update existing negocio in the data array
-            return prevData.map((negocio) => {
-              if (negocio.negocio_id === updatedNegocio.negocio_id) {
-                return updatedNegocio;
+          if (selectedEvento) {
+            // Update existing evento in the data array
+            return prevData.map((evento) => {
+              if (evento.evento_id === updatedEvento.evento_id) {
+                return updatedEvento;
               }
-              return negocio;
+              return evento;
             });
           } else {
-            // Add new negocio to the data array
-            return [...prevData, updatedNegocio];
+            // Add new evento to the data array
+            return [...prevData, updatedEvento];
           }
         });
         setShowModal(false);
@@ -122,7 +105,7 @@ export default function Negocio() {
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setSelectedNegocio(null);
+    setSelectedEvento(null);
   };
 
   const {
@@ -154,8 +137,8 @@ export default function Negocio() {
           mb={4}
           maxWidth="md"
         />
-        <Button colorScheme="teal" onClick={handleAddNegocio}>
-          Agregar Negocio
+        <Button colorScheme="teal" onClick={handleAddEvento}>
+          Agregar Evento
         </Button>
         <Table {...getTableProps()} variant="striped" size="sm">
           <Thead>
@@ -184,10 +167,10 @@ export default function Negocio() {
       <Modal isOpen={showModal} onClose={handleCloseModal}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>{selectedNegocio ? 'Actualizar Negocio' : 'Agregar Negocio'}</ModalHeader>
+          <ModalHeader>{selectedEvento ? 'Actualizar Evento' : 'Agregar Evento'}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <FNegocio onSaveNegocio={handleSaveNegocio} negocio={selectedNegocio} />
+            <FEvento onSaveEvento={handleSaveEvento} evento={selectedEvento} />
           </ModalBody>
           <ModalFooter>
             <Button variant="ghost" onClick={handleCloseModal}>

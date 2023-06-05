@@ -1,44 +1,28 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTable, useFilters, useGlobalFilter } from 'react-table';
-import {
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  Input,
-  Button,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  Stack,
-} from '@chakra-ui/react';
-import FNegocio from '../utils/FNegocio';
+import { Table, Thead, Tbody, Tr, Th, Td, Input, Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, Stack } from '@chakra-ui/react';
+import FProducto from '../utils/FProducto';
 
-export default function Negocio() {
+
+export default function Producto() {
   const [data, setData] = useState([]);
   const [filterInput, setFilterInput] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [selectedNegocio, setSelectedNegocio] = useState(null);
+  const [selectedProducto, setSelectedProducto] = useState(null);
 
   const columns = useMemo(
     () => [
-      { Header: 'ID', accessor: 'negocio_id' },
-      { Header: 'Nombre', accessor: 'nombre_negocio' },
-      { Header: 'Dirección', accessor: 'direccion' },
-      { Header: 'Número de Contacto', accessor: 'numero_contacto' },
+      { Header: 'ID', accessor: 'producto_id' },
+      { Header: 'Negocio ID', accessor: 'negocio_id' },
+      { Header: 'Nombre del Producto', accessor: 'nombre_producto' },
+      { Header: 'Valor', accessor: 'valor' },
     ],
     []
   );
 
-  const fetchNegocios = async () => {
+  const fetchProductos = async () => {
     try {
-      const response = await fetch('http://localhost:3000/negocios');
+      const response = await fetch('http://localhost:3000/productos');
       const jsonData = await response.json();
       setData(jsonData);
     } catch (err) {
@@ -47,7 +31,7 @@ export default function Negocio() {
   };
 
   useEffect(() => {
-    fetchNegocios();
+    fetchProductos();
   }, []);
 
   const handleFilterChange = (e) => {
@@ -62,30 +46,30 @@ export default function Negocio() {
 
     return data.filter((row) => {
       return (
+        row.producto_id &&
         row.negocio_id &&
-        row.nombre_negocio &&
-        row.direccion &&
-        row.numero_contacto &&
-        (row.negocio_id.toString().includes(filterInput.toLowerCase()) ||
-          row.nombre_negocio.toLowerCase().includes(filterInput.toLowerCase()) ||
-          row.direccion.toLowerCase().includes(filterInput.toLowerCase()) ||
-          row.numero_contacto.toString().includes(filterInput.toLowerCase()))
+        row.nombre_producto &&
+        row.valor &&
+        (row.producto_id.toString().includes(filterInput.toLowerCase()) ||
+          row.negocio_id.toString().includes(filterInput.toLowerCase()) ||
+          row.nombre_producto.toLowerCase().includes(filterInput.toLowerCase()) ||
+          row.valor.toString().includes(filterInput.toLowerCase()))
       );
     });
   }, [data, filterInput]);
 
-  const handleAddNegocio = () => {
+  const handleAddProducto = () => {
     setShowModal(true);
-    setSelectedNegocio(null);
+    setSelectedProducto(null);
   };
 
-  const handleSaveNegocio = async (newNegocio) => {
+  const handleSaveProducto = async (newProducto) => {
     try {
-      let url = 'http://localhost:3000/negocios';
+      let url = 'http://localhost:3000/productos';
       let method = 'POST';
 
-      if (selectedNegocio) {
-        url = 'http://localhost:3000/updatenegocio';
+      if (selectedProducto) {
+        url = 'http://localhost:3000/updateproducto';
         method = 'POST';
       }
 
@@ -94,23 +78,23 @@ export default function Negocio() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(newNegocio),
+        body: JSON.stringify(newProducto),
       });
 
       if (response.ok) {
-        const updatedNegocio = await response.json();
+        const updatedProducto = await response.json();
         setData((prevData) => {
-          if (selectedNegocio) {
-            // Update existing negocio in the data array
-            return prevData.map((negocio) => {
-              if (negocio.negocio_id === updatedNegocio.negocio_id) {
-                return updatedNegocio;
+          if (selectedProducto) {
+            // Update existing producto in the data array
+            return prevData.map((producto) => {
+              if (producto.producto_id === updatedProducto.producto_id) {
+                return updatedProducto;
               }
-              return negocio;
+              return producto;
             });
           } else {
-            // Add new negocio to the data array
-            return [...prevData, updatedNegocio];
+            // Add new producto to the data array
+            return [...prevData, updatedProducto];
           }
         });
         setShowModal(false);
@@ -122,7 +106,7 @@ export default function Negocio() {
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setSelectedNegocio(null);
+    setSelectedProducto(null);
   };
 
   const {
@@ -154,8 +138,8 @@ export default function Negocio() {
           mb={4}
           maxWidth="md"
         />
-        <Button colorScheme="teal" onClick={handleAddNegocio}>
-          Agregar Negocio
+        <Button colorScheme="teal" onClick={handleAddProducto}>
+          Agregar Producto
         </Button>
         <Table {...getTableProps()} variant="striped" size="sm">
           <Thead>
@@ -184,10 +168,12 @@ export default function Negocio() {
       <Modal isOpen={showModal} onClose={handleCloseModal}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>{selectedNegocio ? 'Actualizar Negocio' : 'Agregar Negocio'}</ModalHeader>
+          <ModalHeader>
+            {selectedProducto ? 'Actualizar Producto' : 'Agregar Producto'}
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <FNegocio onSaveNegocio={handleSaveNegocio} negocio={selectedNegocio} />
+            <FProducto onSaveProducto={handleSaveProducto} producto={selectedProducto} />
           </ModalBody>
           <ModalFooter>
             <Button variant="ghost" onClick={handleCloseModal}>

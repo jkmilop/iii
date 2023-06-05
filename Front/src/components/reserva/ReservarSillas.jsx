@@ -1,69 +1,110 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { Box, Grid, Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, ModalCloseButton } from '@chakra-ui/react';
+
 export default function ReservarSillas() {
+  const [sillas, setSillas] = useState(Array(10).fill(Array(10).fill(false)));
+  const [showButton, setShowButton] = useState(false);
+  const [selectedBoxes, setSelectedBoxes] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [valor, setValor] = useState(50000);
 
-    const [asientos, setAsientos] = useState([]);
-    const [asientoSeleccionado, setAsientoSeleccionado] = useState(null);
+  const toggleSilla = (fila, columna) => {
+    const isSelected = sillas[fila][columna];
 
-    useEffect(() => {
-        obtenerAsientos();
-    }, []);
+    if (isSelected) {
+      return;
+    }
 
-    const obtenerAsientos = async () => {
-        try {
-            const respuesta = await fetch('http://localhost:3000/sillaid');
-            const datos = await respuesta.json();
-            setAsientos(datos);
-        } catch (error) {
-            console.error(error.message);
-        }
-    };
+    setSillas((prevSillas) => {
+      const newSillas = prevSillas.map((filaSillas, rowIndex) =>
+        filaSillas.map((silla, columnIndex) =>
+          rowIndex === fila && columnIndex === columna ? true : silla
+        )
+      );
+      return newSillas;
+    });
 
-    const seleccionarAsiento = (asiento) => {
-        setAsientoSeleccionado(asiento);
-    };
+    if (!showButton) {
+      setShowButton(true);
+    }
 
-    const reservarAsiento = async (asiento) => {
-        try {
-            const respuesta = await fetch('http://localhost:3000/silla', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    negocio_id: asiento.negocio_id,
-                    valor: asiento.valor,
-                    posicion: asiento.posicion,
-                    tipo_silla: asiento.tipo_silla,
-                }),
-            });
-            const datos = await respuesta.json();
-            console.log(datos); // Manejar la respuesta exitosa
-            // Actualizar la lista de asientos o marcar el asiento como reservado
-            obtenerAsientos();
-        } catch (error) {
-            console.error(error.message);
-        }
-    };
+    setSelectedBoxes((prevSelectedBoxes) => [...prevSelectedBoxes, { fila, columna }]);
+  };
 
-    return (
+  const renderSillas = () => {
+    return sillas.map((fila, rowIndex) => (
+      <Grid key={rowIndex} templateColumns="repeat(10, 1fr)" gap={2}>
+        {fila.map((silla, columnIndex) => (
+          <Box
+            key={columnIndex}
+            w="40px"
+            h="40px"
+            bg={silla ? 'green.400' : selectedBoxes.find((box) => box.fila === rowIndex && box.columna === columnIndex) ? 'gray.400' : 'gray.200'}
+            onClick={() => toggleSilla(rowIndex, columnIndex)}
+            cursor={silla || selectedBoxes.find((box) => box.fila === rowIndex && box.columna === columnIndex) ? 'not-allowed' : 'pointer'}
+            _hover={{ bg: silla ? 'green.300' : 'gray.300' }}
+          ></Box>
+        ))}
+      </Grid>
+    ));
+  };
+
+  const handleReservar = () => {
+    setSelectedBoxes([]);
+    setShowButton(false);
+    setShowModal(true);
+    setSillas((prevSillas) => {
+      const newSillas = [...prevSillas];
+      selectedBoxes.forEach((box) => {
+        newSillas[box.fila][box.columna] = 'red';
+      });
+      return newSillas;
+    });
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  const totalValor = valor * selectedBoxes.length;
+
+  const formatSelectedBoxes = selectedBoxes.map((box) => `[Fila: ${box.fila}, Columna: ${box.columna}]`);
+
+  return (
+    <Box textAlign="center" p={4}>
+      <h1>Reservar Sillas</h1>
+      <Grid templateColumns="repeat(1, 1fr)" gap={2} mt={4}>
+        {renderSillas()}
+      </Grid>
+      {showButton && (
         <div>
-            <h1>Aplicación de Reserva de Boletos</h1>
-            <div>
-                <h2>Asientos Disponibles</h2>
-                {asientos.map((asiento) => (
-                    <div key={asiento.id}>
-                        <span>Asiento {asiento.id}</span>
-                        {asiento.isBooked ? (
-                            <span>Reservado</span>
-                        ) : (
-                            <button onClick={() => reservarAsiento(asiento)}>
-                                Reservar
-                            </button>
-                        )}
-                    </div>
-                ))}
-            </div>
+          <Button mt={4} onClick={handleReservar}>
+            Reservar
+          </Button>
         </div>
-    );
-};
+      )}
 
+      <Modal isOpen={showModal} onClose={closeModal}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Confirmar Reserva</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <p>Desea reservar las sillas seleccionadas?</p>
+            <p>Sillas: {formatSelectedBoxes.join(', ')}</p>
+            <p>Valor: {totalValor}</p>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={closeModal}>
+              Cancelar
+            </Button>
+            <Button variant="ghost" onClick={closeModal}>
+              Reservar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </Box>
+  );
+}

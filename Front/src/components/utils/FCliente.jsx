@@ -10,8 +10,8 @@ import {
 
 const FCliente = ({ onSaveCliente, cliente }) => {
   const [formData, setFormData] = useState({
+    cliente_id: '',
     nombre_cliente: '',
-    password: '',
     cedula: '',
     numero_personal: '',
     correo_personal: '',
@@ -23,8 +23,8 @@ const FCliente = ({ onSaveCliente, cliente }) => {
       setFormData(cliente);
     } else {
       setFormData({
+        cliente_id: '',
         nombre_cliente: '',
-        password: '',
         cedula: '',
         numero_personal: '',
         correo_personal: '',
@@ -48,8 +48,8 @@ const FCliente = ({ onSaveCliente, cliente }) => {
       // Call the onSaveCliente function and pass the formData
       onSaveCliente(formData);
       setFormData({
+        cliente_id: '',
         nombre_cliente: '',
-        password: '',
         cedula: '',
         numero_personal: '',
         correo_personal: '',
@@ -64,25 +64,21 @@ const FCliente = ({ onSaveCliente, cliente }) => {
     let validationErrors = {};
 
     if (!formData.nombre_cliente.trim()) {
-      validationErrors.nombre_cliente = 'Nombre del cliente es requerido';
+      validationErrors.nombre_cliente = 'El nombre del cliente es requerido';
     }
 
     if (!formData.cedula.trim()) {
-      validationErrors.cedula = 'Cedula es requerida';
+      validationErrors.cedula = 'La cédula es requerida';
     }
 
     if (!formData.numero_personal.trim()) {
-      validationErrors.numero_personal = 'Número personal es requerido';
+      validationErrors.numero_personal = 'El número personal es requerido';
     }
 
     if (!formData.correo_personal.trim()) {
-      validationErrors.correo_personal = 'Correo personal es requerido';
+      validationErrors.correo_personal = 'El correo personal es requerido';
     } else if (!isValidEmail(formData.correo_personal)) {
       validationErrors.correo_personal = 'Ingrese un correo válido';
-    }
-
-    if (!formData.password.trim()) {
-      validationErrors.password = 'Contraseña es requerida';
     }
 
     return validationErrors;
@@ -139,17 +135,6 @@ const FCliente = ({ onSaveCliente, cliente }) => {
             onChange={handleInputChange}
           />
           <FormErrorMessage>{errors.correo_personal}</FormErrorMessage>
-        </FormControl>
-
-        <FormControl isInvalid={!!errors.password}>
-          <FormLabel>Contraseña</FormLabel>
-          <Input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleInputChange}
-          />
-          <FormErrorMessage>{errors.password}</FormErrorMessage>
         </FormControl>
 
         <Button type="submit" colorScheme="blue">
