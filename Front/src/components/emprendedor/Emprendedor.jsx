@@ -18,7 +18,8 @@ import {
   ModalCloseButton,
   Stack,
 } from '@chakra-ui/react';
-import FEmprendedor from '../utils/FEmprendedor';
+import FCliente from '../utils/FCliente';
+import SignUp from '../login/SignUp';
 
 export default function Emprendedor() {
   const [data, setData] = useState([]);
@@ -98,7 +99,7 @@ export default function Emprendedor() {
 
   const handleSaveEmprendedor = async (newEmprendedor) => {
     try {
-      let url = 'http://localhost:3000/emprendedores';
+      let url = 'http://localhost:3000/emprendedor';
       let method = 'POST';
 
       if (selectedEmprendedor) {
@@ -189,9 +190,9 @@ export default function Emprendedor() {
           <ModalCloseButton />
           <ModalBody>
             {selectedEmprendedor ? (
-              <FEmprendedor onSaveEmprendedor={handleSaveEmprendedor} emprendedor={selectedEmprendedor} />
+              <FCliente onSaveCliente={handleSaveEmprendedor} cliente={selectedEmprendedor} />
             ) : (
-              <FEmprendedor onSaveEmprendedor={handleSaveEmprendedor} />
+              <SignUp onSaveCliente={handleSaveEmprendedor} />
             )}
           </ModalBody>
           <ModalFooter>

@@ -100,7 +100,7 @@ export default function Cliente() {
 
   const handleSaveCliente = async (newCliente) => {
     try {
-      let url = 'http://localhost:3000/clientes';
+      let url = 'http://localhost:3000/cliente';
       let method = 'POST';
   
       if (selectedCliente) {
