@@ -8,6 +8,9 @@ const queries = require('../config/queries');
  * @returns 
  */
 const crearProducto = async (req, res) => {  
+    if(Array.isArray(req.body)){
+        return res.status(400).send("Se requiere ingresar un JSON"); 
+    }
     try {
         const { negocio_id, nombre_producto, valor } = req.body;
         
@@ -41,6 +44,9 @@ const crearProducto = async (req, res) => {
  * @returns 
  */
 const getProductoByNegocio = async (req, res) => {
+    if(Array.isArray(req.body)){
+        return res.status(400).send("Se requiere ingresar un JSON"); 
+    }
     const {negocio_id} = req.body;
     try {
         const negocio = await pool.query(queries.searchNegocio, [negocio_id]);

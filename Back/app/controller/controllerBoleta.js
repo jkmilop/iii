@@ -7,7 +7,10 @@ const queries = require('../config/queries');
  * @param {*} res Información enviada desde el servidor para el Front.
  * @returns 
  */
-const addBoleta = async (req, res) => {  
+const addBoleta = async (req, res) => { 
+    if(Array.isArray(req.body)){
+        return res.status(400).send("Se requiere ingresar un JSON"); 
+    } 
     try {
         const { evento_id ,silla_id ,cliente_id ,fecha_hora ,valor_boleta } = req.body;
         
@@ -60,6 +63,9 @@ const addBoleta = async (req, res) => {
  * @returns 
  */
 const getBoletaByCliente = async (req, res) => {
+    if(Array.isArray(req.body)){
+        return res.status(400).send("Se requiere ingresar un JSON"); 
+    }
     const {cliente_id} = req.body;
     if (!( cliente_id )) {
         res.status(400).send("Se requiere ingresar el id de la boleta y el id del cliente.");

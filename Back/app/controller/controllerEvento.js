@@ -7,7 +7,10 @@ const queries = require('../config/queries');
  * @param {*} res Información enviada desde el servidor para el Front.
  * @returns 
  */
-const addEvento = async (req, res) => {  
+const addEvento = async (req, res) => { 
+    if(Array.isArray(req.body)){
+        return res.status(400).send("Se requiere ingresar un JSON"); 
+    } 
     try {
         const { negocio_id, fecha_hora, nombre_evento } = req.body;
         
@@ -42,6 +45,9 @@ const addEvento = async (req, res) => {
  * @returns 
  */
 const getEventoId = async (req, res) => {
+    if(Array.isArray(req.body)){
+        return res.status(400).send("Se requiere ingresar un JSON"); 
+    }
     const {evento_id} = req.body;
     try {
         const evento = await pool.query(queries.searchEvento, [evento_id]);
