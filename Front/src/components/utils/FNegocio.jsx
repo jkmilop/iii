@@ -12,7 +12,7 @@ export default function FNegocio({ onSaveNegocio, negocio }) {
     try {
       const response = await fetch('http://localhost:3000/emprendedors');
       const jsonData = await response.json();
-      const ids = jsonData.map((emprendedor) => emprendedor.id);
+      const ids = jsonData.map((emprendedor) => emprendedor.emprendedor_id);
       setEmprendedorIds(ids);
     } catch (err) {
       console.error(err.message);

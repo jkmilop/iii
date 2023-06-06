@@ -81,7 +81,7 @@ export default function Negocio() {
 
   const handleSaveNegocio = async (newNegocio) => {
     try {
-      let url = 'http://localhost:3000/negocios';
+      let url = 'http://localhost:3000/negocio';
       let method = 'POST';
 
       if (selectedNegocio) {
