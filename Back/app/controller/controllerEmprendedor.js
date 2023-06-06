@@ -39,7 +39,6 @@ const crearEmprendedor = async (req, res) => {
     }
 } 
 
-
 /**
  * @description Función que consulta todos los emprendedores en la base de datos.
  * @param {*} req Data enviada desde el Front para ejecutar el servicio.
@@ -54,7 +53,7 @@ const getEmprendedores = async (req, res) => {
         console.error(error.message);
     }
 }
- 
+
 /**
  * @description Función que consulta un emprendedor en la base de datos.
  * @param {*} req Data enviada desde el Front para ejecutar el servicio.

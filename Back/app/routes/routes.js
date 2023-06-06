@@ -33,8 +33,8 @@ router.post('/updateemprendedor', controllerEmprendedor.updateEmprendedor); //Ac
 
 //Negocio
 router.post('/negocio',  controllerNegocio.crearNegocio);
-router.get('/negocioid', controllerNegocio.getNegocioId); //Consultar todos los emprendedores
-router.get('/negocios', controllerNegocio.getNegocios); //Consultar un emprendedor por id
+router.get('/negocioid', controllerNegocio.getNegocioId); //Consultar un negocio por id
+router.get('/negocios', controllerNegocio.getNegocios); //Consultar todos los negocios
 
 //Silla
 router.post('/silla', controllerSilla.crearSilla);
