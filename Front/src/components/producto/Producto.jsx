@@ -65,13 +65,8 @@ export default function Producto() {
 
   const handleSaveProducto = async (newProducto) => {
     try {
-      let url = 'http://localhost:3000/productos';
+      let url = 'http://localhost:3000/producto';
       let method = 'POST';
-
-      if (selectedProducto) {
-        url = 'http://localhost:3000/updateproducto';
-        method = 'POST';
-      }
 
       const response = await fetch(url, {
         method,
